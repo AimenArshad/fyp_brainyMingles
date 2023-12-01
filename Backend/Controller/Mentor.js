@@ -166,7 +166,7 @@ const mentorshipRequests = async (req, res) => {
 
 const studentsessionRequests = async (req, res) => {
 try{
-    const mentorEmail = req.query.email; // Assuming the mentor's email is in the request's user object
+    const mentorEmail = req.body.email; // Assuming the mentor's email is in the request's user object
     console.log(mentorEmail)
     // Find the session requests for the mentor
     const sessionRequests = await SessionRequest.findOne({ mentorEmail });
@@ -214,8 +214,8 @@ try{
 
 const acceptSessionRequest = async (req, res) => {
   try {
-    const { mentorEmail, studentEmail, sessionType, topic, time } = req.body;
-
+    const { studentEmail, sessionType, topic, time } = req.body;
+       const mentorEmail=req.body.email;
     // Find the session request for the mentor
     let existingSessionRequest = await SessionRequest.findOne({ mentorEmail });
 
@@ -257,8 +257,9 @@ const acceptSessionRequest = async (req, res) => {
 // Create a new route for handling session request rejection
 const rejectSessionRequest  = async (req, res) => {
   try {
-    const { mentorEmail, studentEmail, sessionType, topic, time } = req.body;
-
+    const {  studentEmail, sessionType, topic, time } = req.body;
+      const mentorEmail=req.body.email;
+      console.log(mentorEmail)
     // Find the session request for the mentor
     let existingSessionRequest = await SessionRequest.findOne({ mentorEmail });
 

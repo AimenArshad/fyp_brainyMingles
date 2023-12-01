@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:brainy_mingles/widgets/my_button.dart';
 
 class SessionRequest extends StatefulWidget {
@@ -24,20 +25,34 @@ class _SessionRequestState extends State<SessionRequest> {
     fetchDataFromBackend();
   }
 
-  Future<void> fetchDataFromBackend() async {
-    final mentorEmail = 'anamfatima@gmail.com'; // Hardcoded mentor email
-    final response = await http.get(
-      Uri.parse(
-          'http://10.0.2.2:4200/api/mentor/get-session-request?email=$mentorEmail'),
-    );
+  Future<String?> retrieveToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token');
+  }
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      setState(() {
-        sessionData = data;
-      });
+  Future<void> fetchDataFromBackend() async {
+    final String? token = await retrieveToken();
+    print(token);
+    if (token != null) {
+      final response = await http.get(
+        Uri.parse(
+          'http://10.0.2.2:4200/api/mentor/get-session-request',
+        ),
+        headers: {
+          "Authorization": "Bearer $token",
+        },
+      );
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        setState(() {
+          sessionData = data;
+        });
+      } else {
+        print('Failed to load data from the backend');
+      }
     } else {
-      print('Failed to load data from the backend');
+      // Handle the case where the token is not available
+      print('Token not available');
     }
   }
 
@@ -128,59 +143,79 @@ class SessionRequestBox extends StatelessWidget {
     this.topic,
     required this.fetchDataCallback,
   });
+
   Future<void> acceptRequest() async {
-    final mentorEmail =
-        'anamfatima@gmail.com'; // Replace with the mentor's email
+    Future<String?> retrieveToken() async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      return prefs.getString('token');
+    }
 
     final requestData = {
-      "mentorEmail": mentorEmail,
       "studentEmail": studentEmail,
       "sessionType": sessionType,
       "time": time,
       "topic": topic // Send the student's email
     };
+    final String? token = await retrieveToken();
+    print(token);
+    if (token != null) {
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:4200/api/mentor/accept-sessionrequest'),
+        body: jsonEncode(requestData),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
 
-    final response = await http.post(
-      Uri.parse('http://10.0.2.2:4200/api/mentor/accept-sessionrequest'),
-      body: jsonEncode(requestData),
-      headers: {"Content-Type": "application/json"},
-    );
-
-    if (response.statusCode == 200) {
-      // Session request accepted successfully
-      print('Session request accepted successfully');
-      fetchDataCallback(); // Call the callback to update the data
+      if (response.statusCode == 200) {
+        // Session request accepted successfully
+        print('Session request accepted successfully');
+        fetchDataCallback(); // Call the callback to update the data
+      } else {
+        // Handle the error (e.g., show an error message)
+        print('Session request acceptance failed');
+      }
     } else {
-      // Handle the error (e.g., show an error message)
-      print('Session request acceptance failed');
+      // Handle the case where the token is not available
+      print('Token not available');
     }
   }
 
   Future<void> declineRequest() async {
-    final mentorEmail =
-        'anamfatima@gmail.com'; // Replace with the mentor's email
+    Future<String?> retrieveToken() async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      return prefs.getString('token');
+    }
 
     final requestData = {
-      "mentorEmail": mentorEmail,
       "studentEmail": studentEmail,
       "sessionType": sessionType,
       "time": time,
       "topic": topic // Send the student's email
     };
+    final String? token = await retrieveToken();
+    print(token);
+    if (token != null) {
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:4200/api/mentor/reject-sessionrequest'),
+        body: jsonEncode(requestData),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
 
-    final response = await http.post(
-      Uri.parse('http://10.0.2.2:4200/api/mentor/reject-sessionrequest'),
-      body: jsonEncode(requestData),
-      headers: {"Content-Type": "application/json"},
-    );
-
-    if (response.statusCode == 200) {
-      // Session request declined successfully
-      print('Session request declined successfully');
-      fetchDataCallback(); // Call the callback to update the data
+      if (response.statusCode == 200) {
+        // Session request declined successfully
+        print('Session request declined successfully');
+        fetchDataCallback(); // Call the callback to update the data
+      } else {
+        // Handle the error (e.g., show an error message)
+        print('Session request decline failed');
+      }
     } else {
-      // Handle the error (e.g., show an error message)
-      print('Session request decline failed');
+      print('Token not available');
     }
   }
 

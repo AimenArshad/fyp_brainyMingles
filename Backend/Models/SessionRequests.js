@@ -11,10 +11,10 @@ const sessionRequestSchema = new mongoose.Schema({
         type: String,
         required: true,
       },
-      sessionLimit: {
-        type: Number, // You can set an appropriate data type for the limit (e.g., Number)
-        required: true,
-      },
+      // sessionLimit: {
+      //   type: Number, // You can set an appropriate data type for the limit (e.g., Number)
+      //   required: true,
+      // },
       sessions: [
         {
           sessionType: {

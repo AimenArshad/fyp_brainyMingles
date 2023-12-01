@@ -75,7 +75,7 @@ class _LoginViewState extends State<LoginView> {
 
         // Store the token
         await storeToken(token);
-
+        print(token);
         String message;
 
         // Handle the user's role and set the message

@@ -28,7 +28,7 @@ class _ArrangeASessionViewState extends State<ArrangeASessionView> {
   }
 
   Future<String?> retrieveToken() async {
-    final prefs = await SharedPreferences.getInstance();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('token');
   }
 
@@ -45,11 +45,9 @@ class _ArrangeASessionViewState extends State<ArrangeASessionView> {
   String time = '';
   String topic = '';
 
-  // Function to create and send the session request to the backend
   Future<void> createSessionRequest() async {
     // Create a session request data object
-    final sessionRequests = {
-      "studentEmail": "mehreen@gmail.com",
+    final sessions = {
       "sessionType": sessionType,
       "time": time,
       "topic": topic,
@@ -58,27 +56,33 @@ class _ArrangeASessionViewState extends State<ArrangeASessionView> {
     // Create the request data
     final requestData = {
       "mentorEmail": widget.mentorEmail,
-      "sessionRequests": [sessionRequests],
+      "sessions": [sessions],
     };
 
-    final Map<String, String> headers = {
-      "Content-Type": "application/json",
-      "token": authToken!,
-    };
+    final String? token = await retrieveToken();
+    print(token);
 
-    final response = await http.post(
-      Uri.parse('http://10.0.2.2:4200/api/student/session-request'),
-      body: jsonEncode(requestData),
-      headers: headers,
-    );
+    if (token != null) {
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:4200/api/student/session-request'),
+        body: jsonEncode(requestData),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(response.statusCode == 201
-            ? 'Session request created successfully'
-            : 'Session request creation failed'),
-      ),
-    );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(response.statusCode == 201
+              ? 'Session request created successfully'
+              : 'Session request creation failed'),
+        ),
+      );
+    } else {
+      // Handle the case where the token is not available
+      print('Token not available');
+    }
   }
 
   @override
