@@ -3,7 +3,7 @@ import Student from '../Models/Student.js'
 import bcrypt from 'bcrypt';
 import Mentors from '../Models/Mentor.js';
 import nodemailer from 'nodemailer';
-
+import BiddingRequest from '../Models/BiddingRequests.js';
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
@@ -193,11 +193,11 @@ const verifyOTP = async (req, res) => {
   //   }
   // };
   
-  try {
+try {
     const { mentorEmail, sessions } = req.body;
     const studentEmail = req.body.email;
-console.log(studentEmail)
-console.log(sessions)
+    console.log(studentEmail)
+    console.log(sessions)
     // Find the existing session request for the mentor
     let existingSessionRequest = await SessionRequest.findOne({ mentorEmail });
 
@@ -261,11 +261,61 @@ console.log(sessions)
     try {
       const email=req.body.email;
       console.log(email)
-      const mentors = await Student.findOne({email});
-      res.status(200).json(mentors);
+      const students = await Student.findOne({email});
+      res.status(200).json(students);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'An error occurred while fetching mentorship requests' });
+      res.status(500).json({ error: 'An error occurred while fetching student details' });
     }
   }
-  export {verifyEmail,verifyOTP,createSessionRequest,findMentors,getMyDetails}
+
+
+
+  //Make a bid
+  const makeABid = async (req, res) => {
+  try {
+    const { mentorEmail, budget, sessionType, course } = req.body;
+    const studentEmail=req.body.email
+    console.log(mentorEmail)
+    console.log(budget)
+
+    // Check if mentor already exists
+    let biddingRequest = await BiddingRequest.findOne({ mentorEmail });
+
+    if (!biddingRequest) {
+      // If mentor doesn't exist, create a new one
+      biddingRequest = new BiddingRequest({
+        mentorEmail,
+        biddingRequests: [{ studentEmail, bids: [{ budget, sessionType, course }] }],
+      });
+    } else {
+      // Check if student has already requested for the same course
+      const existingStudent = biddingRequest.biddingRequests.find(
+        (request) => request.studentEmail === studentEmail
+      );
+
+      if (existingStudent) {
+        const existingCourse = existingStudent.bids.find((bid) => bid.course === course);
+
+        if (existingCourse) {
+          return res.status(400).json({ message: 'You have already requested this mentor for this course.' });
+        }
+
+        existingStudent.bids.push({ budget, sessionType, course });
+      } else {
+        biddingRequest.biddingRequests.push({ studentEmail, bids: [{ budget, sessionType, course }] });
+      }
+    }
+
+    // Save the updated bidding request
+    await biddingRequest.save();
+
+    res.status(200).json({ message: 'Bid request successful.' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+  }
+
+
+  export {verifyEmail,verifyOTP,createSessionRequest,findMentors,getMyDetails,makeABid}

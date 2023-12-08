@@ -123,6 +123,8 @@ const verifyOTP = async (req, res) => {
     console.error(error);
   }
 };
+
+
 const mentorshipRequests = async (req, res) => {
     try {
 
@@ -133,7 +135,7 @@ const mentorshipRequests = async (req, res) => {
        // Hash the password using bcrypt
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-        // Create a new mentorship request document
+       
         const mentorshipRequest = new MentorshipRequest({
           name,
           username:mentorUsername,

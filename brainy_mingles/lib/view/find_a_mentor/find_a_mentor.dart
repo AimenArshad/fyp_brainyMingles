@@ -5,6 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:brainy_mingles/view/find_a_mentor/arrange_a_session.dart';
+import 'package:brainy_mingles/view/Bidding/bid-a-mentor.dart';
+
 import 'package:brainy_mingles/const/app_colors.dart';
 import 'package:brainy_mingles/widgets/custom_appbar.dart';
 import 'package:brainy_mingles/widgets/custom_textfield.dart';
@@ -245,8 +247,17 @@ class _MentorBoxState extends State<MentorBox> {
               MyButton(
                 width: 120.w,
                 height: 40.h,
-                text: "Make your Bid",
+                text: "Make a bid",
                 textSize: 10.sp,
+                onTap: () {
+                  // Replace 'mentorEmail' with the actual email of the mentor
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          BiddingRequestView(mentorEmail: widget.email),
+                    ),
+                  );
+                },
               ),
             ],
           ),
