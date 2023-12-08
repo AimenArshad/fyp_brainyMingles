@@ -73,7 +73,7 @@ class _BiddingRequestViewState extends State<BiddingRequestView> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(response.statusCode == 201
+          content: Text(response.statusCode == 200
               ? 'Bidding request created successfully'
               : 'Bidding request creation failed'),
         ),
@@ -103,19 +103,44 @@ class _BiddingRequestViewState extends State<BiddingRequestView> {
                   ),
                 ),
                 40.h.sbh,
-                DropdownButton<String>(
-                  value: selectedCourse,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      selectedCourse = newValue!;
-                    });
-                  },
-                  items: BiddingCourses.courses.map((String course) {
-                    return DropdownMenuItem<String>(
-                      value: course,
-                      child: Text(course),
-                    );
-                  }).toList(),
+                // DropdownButton<String>(
+                //   value: selectedCourse,
+                //   onChanged: (String? newValue) {
+                //     setState(() {
+                //       selectedCourse = newValue!;
+                //     });
+                //   },
+                //   items: BiddingCourses.courses.map((String course) {
+                //     return DropdownMenuItem<String>(
+                //       value: course,
+                //       child: Text(course),
+                //     );
+                //   }).toList(),
+                // ),
+                Container(
+                  width: double.infinity,
+                  height: 55.h,
+                  decoration: ShapeDecoration(
+                    color: const Color(0xFFEEEEEE),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: DropdownButton<String>(
+                    value: selectedCourse,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedCourse = newValue!;
+                      });
+                    },
+                    items: BiddingCourses.courses.map((String course) {
+                      return DropdownMenuItem<String>(
+                        value: course,
+                        child: Text(course),
+                      );
+                    }).toList(),
+                    alignment: Alignment.center,
+                  ),
                 ),
                 15.h.sbh,
                 InkWell(
@@ -168,7 +193,8 @@ class _BiddingRequestViewState extends State<BiddingRequestView> {
                 15.h.sbh,
                 MyButton(
                   text: "Request Bidding",
-                  onTap: createBiddingRequest,
+                  onTap:
+                      createBiddingRequest, // Notfication should be sent to the mentor of bid request.
                 )
               ],
             ),

@@ -9,15 +9,15 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:brainy_mingles/widgets/my_button.dart';
 
-class SessionRequest extends StatefulWidget {
-  const SessionRequest({Key? key}) : super(key: key);
+class BiddingRequest extends StatefulWidget {
+  const BiddingRequest({Key? key}) : super(key: key);
 
   @override
-  _SessionRequestState createState() => _SessionRequestState();
+  _BiddingRequestState createState() => _BiddingRequestState();
 }
 
-class _SessionRequestState extends State<SessionRequest> {
-  List<dynamic> sessionData = [];
+class _BiddingRequestState extends State<BiddingRequest> {
+  List<dynamic> bidData = [];
 
   @override
   void initState() {
@@ -36,7 +36,7 @@ class _SessionRequestState extends State<SessionRequest> {
     if (token != null) {
       final response = await http.get(
         Uri.parse(
-          'http://10.0.2.2:4200/api/mentor/get-session-request',
+          'http://10.0.2.2:4200/api/mentor/get-bidding-request',
         ),
         headers: {
           "Authorization": "Bearer $token",
@@ -45,7 +45,7 @@ class _SessionRequestState extends State<SessionRequest> {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         setState(() {
-          sessionData = data;
+          bidData = data;
         });
       } else {
         print('Failed to load data from the backend');
@@ -74,7 +74,7 @@ class _SessionRequestState extends State<SessionRequest> {
                   TextSpan(
                     children: [
                       TextSpan(
-                        text: 'Session ',
+                        text: 'Biddig ',
                         style: TextStyle(
                           color: AppColor.blueColor,
                           fontSize: 25.sp,
@@ -99,21 +99,21 @@ class _SessionRequestState extends State<SessionRequest> {
           Expanded(
             child: ListView.builder(
               padding: EdgeInsets.only(left: 17.w, right: 17.w, top: 10.h),
-              itemCount: sessionData.length,
+              itemCount: bidData.length,
               shrinkWrap: true,
               itemBuilder: (context, index) {
-                final sessionItem = sessionData[index];
-                final List<dynamic> sessions = sessionItem['sessions'];
+                final biddingItem = bidData[index];
+                final List<dynamic> bids = biddingItem['bids'];
 
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: sessions.map((session) {
-                    return SessionRequestBox(
-                      studentName: sessionItem['studentName'],
-                      studentEmail: sessionItem['studentEmail'],
-                      sessionType: session['sessionType'],
-                      time: session['time'],
-                      topic: session['topic'],
+                  children: bids.map((bid) {
+                    return BiddingRequestBox(
+                      studentName: biddingItem['studentName'],
+                      studentEmail: biddingItem['studentEmail'],
+                      sessionType: bid['sessionType'],
+                      budget: bid['budget'],
+                      course: bid['course'],
                       fetchDataCallback: fetchDataFromBackend,
                     );
                   }).toList(),
@@ -127,20 +127,20 @@ class _SessionRequestState extends State<SessionRequest> {
   }
 }
 
-class SessionRequestBox extends StatelessWidget {
+class BiddingRequestBox extends StatelessWidget {
   final String studentName;
   final String studentEmail;
   final String? sessionType;
-  final String? topic;
-  final String? time;
+  final String? course;
+  final String? budget;
   final VoidCallback fetchDataCallback;
 
-  SessionRequestBox({
+  BiddingRequestBox({
     required this.studentName,
     required this.studentEmail,
     this.sessionType,
-    this.time,
-    this.topic,
+    this.budget,
+    this.course,
     required this.fetchDataCallback,
   });
 
@@ -153,14 +153,14 @@ class SessionRequestBox extends StatelessWidget {
     final requestData = {
       "studentEmail": studentEmail,
       "sessionType": sessionType,
-      "time": time,
-      "topic": topic // Send the student's email
+      "budget": budget,
+      "course": course // Send the student's email
     };
     final String? token = await retrieveToken();
     print(token);
     if (token != null) {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:4200/api/mentor/accept-sessionrequest'),
+        Uri.parse('http://10.0.2.2:4200/api/mentor/accept-bidding-request'),
         body: jsonEncode(requestData),
         headers: {
           "Content-Type": "application/json",
@@ -169,13 +169,13 @@ class SessionRequestBox extends StatelessWidget {
       );
 
       if (response.statusCode == 200) {
-        // Session request accepted successfully
+        // bid request accepted successfully
         print(
-            'Session request accepted successfully'); // Notfication should be sent to the student of bid request accepted.
+            'bid request accepted successfully'); // Notfication should be sent to the student of bid accepted succesfully.
         fetchDataCallback(); // Call the callback to update the data
       } else {
         // Handle the error (e.g., show an error message)
-        print('Session request acceptance failed');
+        print('bid request acceptance failed');
       }
     } else {
       // Handle the case where the token is not available
@@ -192,14 +192,14 @@ class SessionRequestBox extends StatelessWidget {
     final requestData = {
       "studentEmail": studentEmail,
       "sessionType": sessionType,
-      "time": time,
-      "topic": topic // Send the student's email
+      "budget": budget,
+      "course": course // Send the student's email
     };
     final String? token = await retrieveToken();
     print(token);
     if (token != null) {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:4200/api/mentor/reject-sessionrequest'),
+        Uri.parse('http://10.0.2.2:4200/api/mentor/reject-bidding-request'),
         body: jsonEncode(requestData),
         headers: {
           "Content-Type": "application/json",
@@ -208,13 +208,13 @@ class SessionRequestBox extends StatelessWidget {
       );
 
       if (response.statusCode == 200) {
-        // Session request declined successfully
+        // bid request declined successfully
         print(
-            'Session request declined successfully'); // Notfication should be sent to the student of bid declined.
-        fetchDataCallback(); // Call the callback to update the data
+            'bid request declined successfully'); // Notfication should be sent to the student of bid request declined.
+        fetchDataCallback();
       } else {
         // Handle the error (e.g., show an error message)
-        print('Session request decline failed');
+        print('bid request decline failed');
       }
     } else {
       print('Token not available');
@@ -283,7 +283,7 @@ class SessionRequestBox extends StatelessWidget {
                   ),
                   if (sessionType != null)
                     Text(
-                      'Session Type: $sessionType',
+                      'bid Type: $sessionType',
                       style: TextStyle(
                         color: const Color(0xFF3A2F2F),
                         fontSize: 12.sp,
@@ -291,7 +291,7 @@ class SessionRequestBox extends StatelessWidget {
                       ),
                     ),
                   Text(
-                    'Time: $time',
+                    'budget: $budget',
                     style: TextStyle(
                       color: const Color(0xFF3A2F2F),
                       fontSize: 12.sp,
@@ -299,7 +299,7 @@ class SessionRequestBox extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Topic: $topic',
+                    'course: $course',
                     style: TextStyle(
                       color: const Color(0xFF3A2F2F),
                       fontSize: 12.sp,

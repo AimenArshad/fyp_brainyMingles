@@ -165,7 +165,8 @@ class _ArrangeASessionViewState extends State<ArrangeASessionView> {
                 ),
                 15.h.sbh,
                 MyButton(
-                  text: "Request Session",
+                  text:
+                      "Request Session", // Notfication should be sent to the mentor of session request.
                   onTap: createSessionRequest,
                 )
               ],

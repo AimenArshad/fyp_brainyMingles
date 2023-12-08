@@ -1,6 +1,7 @@
 import 'package:brainy_mingles/const/app_colors.dart';
 import 'package:brainy_mingles/provider/bottom_bar_provider.dart';
 import 'package:brainy_mingles/view/sessions_request/session_request.dart';
+import 'package:brainy_mingles/view/Bidding/accept-request-bid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -14,7 +15,8 @@ class MainHomeViewMentor extends StatefulWidget {
 
 List<Widget> pages = [
   // DashboardView(),
-  SessionRequest(),
+  BiddingRequest(),
+  //SessionRequest(),
   SessionRequest(),
   SessionRequest(),
   SessionRequest(),

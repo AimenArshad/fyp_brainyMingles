@@ -4,7 +4,8 @@ import Student from '../Models/Student.js';
 import SessionRequest from '../Models/SessionRequests.js';
 import nodemailer from 'nodemailer';
 import Mentors from '../Models/Mentor.js';
-
+import BiddingRequest from '../Models/BiddingRequests.js';
+import AcceptedBids from '../Models/AcceptedBids.js';
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
@@ -296,4 +297,219 @@ const rejectSessionRequest  = async (req, res) => {
   }
 };
 
-  export {verifyEmail,verifyOTP,studentsessionRequests,acceptSessionRequest,rejectSessionRequest}
+
+
+
+
+const studentsBiddingRequests = async (req, res) => {
+  try {
+    const mentorEmail = req.body.email; // Assuming the mentor's email is in the request's user object
+    console.log(mentorEmail);
+
+    // Find the bidding requests for the mentor
+    const biddingRequests = await BiddingRequest.findOne({ mentorEmail });
+    console.log(biddingRequests);
+
+    if (!biddingRequests) {
+      return res.status(404).json({ error: 'No bidding requests found for this mentor' });
+    }
+
+    const requestsData = [];
+
+    for (const request of biddingRequests.biddingRequests) {
+      // Fetch student name from the Student schema based on student email
+      const student = await Student.findOne({ email: request.studentEmail });
+
+      if (!student) {
+        return res.status(404).json({ error: 'Student not found' });
+      }
+
+      // Create an array to store all bids for this student
+      const bidsData = [];
+
+      for (const bid of request.bids) {
+        bidsData.push({
+          budget: bid.budget,
+          sessionType: bid.sessionType,
+          course: bid.course,
+        });
+      }
+
+      // Add student's data and their bids to the response
+      requestsData.push({
+        studentName: student.name,
+        studentEmail: request.studentEmail,
+        bids: bidsData,
+      });
+    }
+
+    res.status(200).json(requestsData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+
+
+
+const acceptBiddingRequest = async (req, res) => {
+  try {
+    const { studentEmail, sessionType, budget, course } = req.body;
+    const mentorEmail = req.body.email;
+
+    // Find the bidding request for the mentor
+    let existingBiddingRequest = await BiddingRequest.findOne({ mentorEmail });
+
+    if (existingBiddingRequest) {
+      // Find the student request in the bidding request based on studentEmail
+      const biddingRequest = existingBiddingRequest.biddingRequests.find(
+        (request) => request.studentEmail === studentEmail
+      );
+
+      console.log(biddingRequest)
+      if (biddingRequest) {
+        // Remove the bid requested based on sessionType, budget, and course
+        biddingRequest.bids = biddingRequest.bids.filter(
+          (bid) =>
+            bid.sessionType !== sessionType ||
+            bid.budget !== budget ||
+            bid.course !== course
+        );
+
+        // If the student has no bids, remove the student request
+        if (biddingRequest.bids.length === 0) {
+          existingBiddingRequest.biddingRequests = existingBiddingRequest.biddingRequests.filter(
+            (request) => request.studentEmail !== studentEmail
+          );
+        }
+
+        // If the mentor has no more bidding requests, remove the mentor record
+        if (existingBiddingRequest.biddingRequests.length === 0) {
+          await BiddingRequest.findOneAndRemove({ mentorEmail });
+        } 
+          // Save the changes to the database
+        await existingBiddingRequest.save();
+
+        
+        // Check if the mentor already exists in the AcceptedBids schema
+        let existingAcceptedBids = await AcceptedBids.findOne({ mentorEmail });
+
+        if (!existingAcceptedBids) {
+          // If the mentor does not exist, create a new document in the AcceptedBids schema
+          existingAcceptedBids = new AcceptedBids({
+            mentorEmail,
+            biddingRequests: [],
+          });
+        }
+
+        // Check if the student already exists in the AcceptedBids schema
+        const existingStudentRequest = existingAcceptedBids.biddingRequests.find(
+          (request) => request.studentEmail === studentEmail
+        );
+
+        if (existingStudentRequest) {
+          // If the student already exists, check if the course is different
+          //const existingBid = existingStudentRequest.bids.find((bid) => bid.course === course);
+
+          // if (existingBid) {
+          //   // If the course is the same, do not add a new record
+          //   return res.status(400).json({ message: 'Bidding request already accepted for the same course' });
+         // } else {
+            // If the course is different, push the new bid into the existing student request
+            existingStudentRequest.bids.push({
+              budget,
+              sessionType,
+              course,
+            });
+          
+      }else {
+          // If the student does not exist, add a new student request with the bid
+          existingAcceptedBids.biddingRequests.push({
+            studentEmail,
+            bids: [
+              {
+                budget,
+                sessionType,
+                course,
+              },
+            ],
+          });
+        }
+
+        // Save the changes to the AcceptedBids schema
+        await existingAcceptedBids.save();
+        res.status(200).json({ message: 'Bidding request accepted successfully' });
+
+
+      } else {
+        res.status(404).json({ message: 'No bidding request found for the student' });
+      }
+    } else {
+      res.status(404).json({ message: 'No bidding request found for the mentor' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error');
+  }
+};
+
+
+
+
+const rejectBiddingRequest = async (req, res) => {
+  try {
+    const { studentEmail, sessionType, budget, course } = req.body;
+    const mentorEmail = req.body.email;
+
+    // Find the bidding request for the mentor
+    let existingBiddingRequest = await BiddingRequest.findOne({ mentorEmail });
+
+    if (existingBiddingRequest) {
+      // Find the student request in the bidding request based on studentEmail
+      const biddingRequest = existingBiddingRequest.biddingRequests.find(
+        (request) => request.studentEmail === studentEmail
+      );
+
+      if (biddingRequest) {
+        // Remove the bid requested based on sessionType, budget, and course
+        biddingRequest.bids = biddingRequest.bids.filter(
+          (bid) =>
+            bid.sessionType !== sessionType ||
+            bid.budget !== budget ||
+            bid.course !== course
+        );
+
+        // If the student has no bids, remove the student request
+        if (biddingRequest.bids.length === 0) {
+          existingBiddingRequest.biddingRequests = existingBiddingRequest.biddingRequests.filter(
+            (request) => request.studentEmail !== studentEmail
+          );
+        }
+
+        // If the mentor has no more bidding requests, remove the mentor record
+        if (existingBiddingRequest.biddingRequests.length === 0) {
+          await BiddingRequest.findOneAndRemove({ mentorEmail });
+        } 
+          // Save the changes to the database
+          await existingBiddingRequest.save();
+        
+
+        res.status(200).json({ message: 'Bidding request accepted successfully' });
+      } else {
+        res.status(404).json({ message: 'No bidding request found for the student' });
+      }
+    } else {
+      res.status(404).json({ message: 'No bidding request found for the mentor' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error');
+  }
+};
+
+
+  
+
+  export {verifyEmail,verifyOTP,studentsessionRequests,acceptSessionRequest,rejectSessionRequest,studentsBiddingRequests,
+  acceptBiddingRequest,rejectBiddingRequest}
