@@ -30,6 +30,12 @@ class _LoginViewState extends State<LoginView> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('token', token);
   }
+  Future<void> storeStudentId(String userId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('studentId', userId);
+  }
+
+
 
   Future<void> performLogin() async {
     // Clear previous validation errors
@@ -63,19 +69,23 @@ class _LoginViewState extends State<LoginView> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:4200/api/login'),
+        Uri.parse('http://192.168.10.42:4200/api/login'),
         body: jsonEncode(loginData),
         headers: {"Content-Type": "application/json"},
       );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        print(data);
         final role = data["role"];
         final token = data["token"];
+        final studentId = data["userId"];
 
         // Store the token
         await storeToken(token);
+        await storeStudentId(studentId);
         print(token);
+        print(studentId);
         String message;
 
         // Handle the user's role and set the message

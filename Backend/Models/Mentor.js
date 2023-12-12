@@ -24,29 +24,48 @@ const mentorSchema = new mongoose.Schema({
     required: true,
   },
   budget: {
+    type:   Number,
+    required: true,
+  },
+  domains: [
+    {
+      name: {
+        type: String,
+        required: true,
+      },
+      score: {
+        type: Number,
+        required: true,
+      },
+    },
+  ],
+  languages: [
+    {
+      name: {
+        type: String,
+        required: true,
+      },
+      score: {
+        type: Number,
+        required: true,
+      },
+    },
+  ],
+  gender: {
     type: String,
     required: true,
   },
-  expertise: {
-    type: [String],
+  mode: {
+    type: String,
+    required: true,
   },
-  skills: {
-    type: [String],
+  session: {
+    type: String,
+    required: true,
   },
-  challenges: {
-    type: [String
-    ],
-  },
-  preferences: {
-    gender: {
-      type: [String],
-    },
-    mode: {
-      type: [String],
-    },
-    session: {
-      type: [String],
-    },
+  availability: {
+    type: String,
+    required: true,
   },
 });
 

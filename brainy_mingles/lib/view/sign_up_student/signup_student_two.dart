@@ -9,8 +9,9 @@ import 'package:brainy_mingles/view/verifyOtp.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+
 Future<void> sendEmail(String email) async {
-  final url = 'http://10.0.2.2:4200/api/student/sendOtp';
+  final url = 'http://192.168.10.42:4200/api/student/sendOtp';
 
   final data = {
   'email': email,
@@ -60,20 +61,33 @@ class SignUpStudentTwo extends StatefulWidget {
 }
 
 class _SignUpStudentTwoState extends State<SignUpStudentTwo> {
-  List<String> domainArray = [];
+  int value = 0;
+  Map<String, int?> expertiseMap = {};
+  Map<int, String> expertiseLevelMap = {
+    1: 'Low',
+    5: 'Medium',
+    9: 'High',
+
+  };
+  List<String> expertiseArray = [];
   List<String> languagesArray = [];
-  List<String> challengesArray = [];
-  List<String> preferencesArray = [];
   String? selectedGender;
   String? selectedMode;
   String? selectedSession;
+  String? selectedAvailability;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListView(
       padding: EdgeInsets.zero,
       children: [
-      Image.asset("assets/login_top_shape_2.png"),
+      Container(
+            width: double.infinity,
+            child: Image.asset(
+              "assets/login_top_shape_2.png",
+              fit: BoxFit.cover,
+            ),
+          ),
       Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Column(
@@ -90,24 +104,52 @@ class _SignUpStudentTwoState extends State<SignUpStudentTwo> {
           ),
           10.h.sbh,
           Wrap(
-            spacing: 10.w,
-            children: StudentModel().domains.map((domain) {
-            return SmallButton(
-              text: domain,
-              isSelected: domainArray.contains(domain),
-              onPressed: () {
-              setState(() {
-              if (domainArray.contains(domain)) {
-                domainArray.remove(domain);
-              } else {
-                domainArray.add(domain);
-              }
-              });
-              },
+          spacing: 10.w,
+          children: StudentModel().domains.map((domain) {
+            return Column(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    _showSlider(context, domain,expertiseArray);
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                      expertiseMap.containsKey(domain)
+                          ? const Color(0xFF405897)
+                          : const Color(0xFFD9D9D9),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        domain,
+                        style: TextStyle(
+                          color: expertiseMap.containsKey(domain)
+                              ? Colors.white
+                              : const Color(0xFF313131),
+                          fontSize: 10.sp,
+                          fontFamily: 'Urbanist',
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      if (expertiseMap.containsKey(domain))
+                        Text('${expertiseLevelMap[expertiseMap[domain]]}',
+                        style: TextStyle(
+                          color: Colors.white, // Set text color to white
+                          fontSize: 8.sp, // Decrease font size
+                          fontFamily: 'Urbanist',
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             );
-            }).toList(),
-          ),
-          Text(
+          }).toList(),
+        ),
+         Text(
             'Languages',
             style: TextStyle(
               color: AppColor.blueColor,
@@ -117,52 +159,53 @@ class _SignUpStudentTwoState extends State<SignUpStudentTwo> {
             ),
           ),
           10.h.sbh,
-          Wrap(
-            spacing: 10.w,
-            children: StudentModel().languages.map((language) {
-            return SmallButton(
-              text: language,
-              isSelected: languagesArray.contains(language),
-              onPressed: () {
-              setState(() {
-              if (languagesArray.contains(language)) {
-                languagesArray.remove(language);
-              } else {
-                languagesArray.add(language);
-              }
-              });
-              },
-            );
-            }).toList(),
-          ),
-          Text(
-            'Challenges',
-            style: TextStyle(
-            color: AppColor.blueColor,
-            fontSize: 20.sp,
-            fontFamily: 'Urbanist',
-            fontWeight: FontWeight.w500,
-            ),
-          ),
-          10.h.sbh,
-          Wrap(
-            spacing: 10.w,
-            children: StudentModel().challenges.map((challenge) {
-            return SmallButton(
-              text: challenge,
-              isSelected: challengesArray.contains(challenge),
-              onPressed: () {
-              setState(() {
-              if (challengesArray.contains(challenge)) {
-                challengesArray.remove(challenge);
-              } else {
-                challengesArray.add(challenge);
-              }
-              });
-              },
-            );
-            }).toList(),
-          ),
+           Wrap(
+                  spacing: 10.w,
+                  children: StudentModel().languages.map((language) {
+                    return Column(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            _showSlider(context, language, languagesArray);
+                          },
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                              expertiseMap.containsKey(language)
+                                  ? const Color(0xFF405897)
+                                  : const Color(0xFFD9D9D9),
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                language,
+                                style: TextStyle(
+                                  color: expertiseMap.containsKey(language)
+                                      ? Colors.white
+                                      : const Color(0xFF313131),
+                                  fontSize: 10.sp,
+                                  fontFamily: 'Urbanist',
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              if (expertiseMap.containsKey(language))
+                                Text('${expertiseLevelMap[expertiseMap[language]]}',
+                                style: TextStyle(
+                                  color: Colors.white, // Set text color to white
+                                  fontSize: 8.sp, // Decrease font size
+                                  fontFamily: 'Urbanist',
+                                  fontWeight: FontWeight.w500,
+                                ),),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
+
+
           Text(
             'Preferences',
             style: TextStyle(
@@ -172,14 +215,105 @@ class _SignUpStudentTwoState extends State<SignUpStudentTwo> {
             fontWeight: FontWeight.w500,
             ),
           ),
-          10.h.sbh,
-          Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+            10.h.sbh,
+            Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Gender',
+                style: TextStyle(
+                  color: AppColor.blueColor,
+                  fontSize: 20.sp,
+                  fontFamily: 'Urbanist',
+                  fontWeight: FontWeight.w500,
+                ),
+          ),
+           Row(
+            children: StudentModel().gender.map((gender) {
+              return Padding(
+                padding: EdgeInsets.only(right: 10.0), // Adjust the right spacing as needed
+                child: SmallButton(
+                  text: gender,
+                  isSelected: gender == selectedGender,
+                  onPressed: () {
+                    setState(() {
+                      if (gender == selectedGender) {
+                        selectedGender = null; // Deselect the current selection
+                      } else{
+                        selectedGender = gender; // Select the new gender
+                      }
+                    });
+                  },
+                ),
+              );
+            }).toList(),
+           ),
+
           Text(
-            'Gender',
+            'Mode',
+            style: TextStyle(
+            color: AppColor.blueColor,
+            fontSize: 20.sp,
+            fontFamily: 'Urbanist',
+            fontWeight: FontWeight.w500,
+            ),
+          ),
+          10.h.sbh,
+          Row(
+            children: StudentModel().mode.map((mode) {
+              return Padding(
+                padding: EdgeInsets.only(right: 10.0), // Adjust the right spacing as needed
+                child: SmallButton(
+                  text: mode,
+                  isSelected: mode == selectedMode,
+                  onPressed: () {
+                    setState(() {
+                      if (mode == selectedMode) {
+                        selectedMode = null; // Deselect the current selection
+                      } else {
+                        selectedMode = mode; // Select the new gender
+                      }
+                    });
+                  },
+                ),
+              );
+            }).toList(),
+          ),
+          Text(
+            'Sessions',
+            style: TextStyle(
+            color: AppColor.blueColor,
+            fontSize: 20.sp,
+            fontFamily: 'Urbanist',
+            fontWeight: FontWeight.w500,
+            ),
+          ),
+          10.h.sbh,
+          Row(
+            children: StudentModel().session.map((session) {
+              return Padding(
+                padding: EdgeInsets.only(right: 10.0), // Adjust the right spacing as needed
+                child: SmallButton(
+                  text: session,
+                  isSelected: session == selectedSession,
+                  onPressed: () {
+                    setState(() {
+                      if (session == selectedSession) {
+                        selectedSession = null; // Deselect the current selection
+                      } else {
+                        selectedSession = session; // Select the new gender
+                      }
+                    });
+                  },
+                  
+                ),
+              );
+            }).toList(),
+          ),
+          Text(
+            'Availability',
             style: TextStyle(
               color: AppColor.blueColor,
               fontSize: 20.sp,
@@ -187,136 +321,63 @@ class _SignUpStudentTwoState extends State<SignUpStudentTwo> {
               fontWeight: FontWeight.w500,
             ),
           ),
-          Row(
-          children: StudentModel().gender.map((gender) {
-          return Padding(
-          padding: EdgeInsets.only(right: 10.0), // Adjust the right spacing as needed
-          child: SmallButton(
-          text: gender,
-          isSelected: gender == selectedGender,
-          onPressed: () {
-          setState(() {
-          if (gender == selectedGender) {
-          selectedGender = null; // Deselect the current selection
-          preferencesArray.remove(gender); // Remove deselected gender from preferencesArray
-          } else {
-          if (selectedGender != null) {
-          preferencesArray.remove(selectedGender); // Remove previously selected gender
-          }
-          selectedGender = gender; // Select the new gender
-          preferencesArray.add(gender); // Add selected gender to preferencesArray
-          }
-          });
-          },
-          ),
-          );
-          }).toList(),
-          ),
-
-
-          Text(
-          'Mode',
-          style: TextStyle(
-          color: AppColor.blueColor,
-          fontSize: 20.sp,
-          fontFamily: 'Urbanist',
-          fontWeight: FontWeight.w500,
-          ),
-          ),
           10.h.sbh,
           Row(
-          children: StudentModel().mode.map((mode) {
-          return Padding(
-          padding: EdgeInsets.only(right: 10.0), // Adjust the right spacing as needed
-          child: SmallButton(
-          text: mode,
-          isSelected: mode == selectedMode,
-          onPressed: () {
-          setState(() {
-          if (mode == selectedMode) {
-          selectedMode = null; // Deselect the current selection
-          preferencesArray.remove(mode); // Remove deselected gender from preferencesArray
-          } else {
-          if (selectedMode != null) {
-          preferencesArray.remove(selectedMode); // Remove previously selected gender
-          }
-          selectedMode = mode; // Select the new gender
-          preferencesArray.add(mode); // Add selected gender to preferencesArray
-          }
-          });
-          },
+            children: StudentModel().availability.map((availability) {
+              return Padding(
+                padding: EdgeInsets.only(right: 10.0), // Adjust the right spacing as needed
+                child: SmallButton(
+                  text: availability,
+                  isSelected: availability == selectedAvailability,
+                  onPressed: () {
+                    setState(() {
+                      if (availability == selectedAvailability) {
+                        selectedAvailability = null; // Deselect the current selection
+                      } else {
+                        selectedAvailability = availability; // Select the new gender
+                      }
+                    });
+                  },
+                ),
+              );
+            }).toList(),
           ),
-          );
-          }).toList(),
-          ),
-          Text(
-          'Sessions',
-          style: TextStyle(
-          color: AppColor.blueColor,
-          fontSize: 20.sp,
-          fontFamily: 'Urbanist',
-          fontWeight: FontWeight.w500,
-          ),
-          ),
-          10.h.sbh,
-          Row(
-          children: StudentModel().session.map((session) {
-          return Padding(
-          padding: EdgeInsets.only(right: 10.0), // Adjust the right spacing as needed
-          child: SmallButton(
-          text: session,
-          isSelected: session == selectedSession,
-          onPressed: () {
-          setState(() {
-          if (session == selectedSession) {
-          selectedSession = null; // Deselect the current selection
-          preferencesArray.remove(session); // Remove deselected gender from preferencesArray
-          } else {
-          if (selectedSession != null) {
-          preferencesArray.remove(selectedSession); // Remove previously selected gender
-          }
-          selectedSession = session; // Select the new gender
-          preferencesArray.add(session); // Add selected gender to preferencesArray
-          }
-          });
-          },
-          ),
-          );
-          }).toList(),
-          ),
+
           ],
           ),
           ),
           MyButton(
-          width: 150, textSize: 13.sp,
-          onTap:(){
-          String name = widget.name;
-          String username = widget.username;
-          String email = widget.email;
-          String phoneNumber = widget.phoneNumber;
-          String password = widget.password;
+            width: 150, textSize: 13.sp,
+            onTap:(){
+              String name = widget.name;
+              String username = widget.username;
+              String email = widget.email;
+              String phoneNumber = widget.phoneNumber;
+              String password = widget.password;
 
-          sendEmail(email);
-          // Navigate to the second screen and pass collected data
-          Navigator.push(
-          context,
-          MaterialPageRoute(
-          builder: (context) => InputScreen(
-          name: name,
-          username: username,
-          email: email,
-          phoneNumber: phoneNumber,
-          password: password,
-          domainArray: domainArray,
-          languagesArray: languagesArray,
-          challengesArray: challengesArray,
-          preferencesArray: preferencesArray,
-          ),
-          ),
-          );
-          },
-          text: "Register",
-          ),
+              sendEmail(email);
+              // Navigate to the second screen and pass collected data
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => InputScreen(
+                    name: name,
+                    username: username,
+                    email: email,
+                    phoneNumber: phoneNumber,
+                    password: password,
+                    programmingDomains: expertiseArray.map((domain) => {'name': domain, 'difficultyLevel': expertiseMap[domain]}).toList(),
+                    programmingLanguages: languagesArray.map((language) => {'name': language, 'difficultyLevel': expertiseMap[language]}).toList(),
+                    gender: selectedGender!,
+                    mode: selectedMode!,
+                    session: selectedSession!,
+                    availability: selectedAvailability!,
+                ),
+              ),
+            );
+            },
+            text: "Register",
+            ),
           ],
         ),
       ),
@@ -324,4 +385,72 @@ class _SignUpStudentTwoState extends State<SignUpStudentTwo> {
       ),
     );
   }
+void _showSlider(BuildContext context, String domain, List<String> expertiseArr
+) {
+  int selectedValue = expertiseMap.containsKey(domain) ? expertiseMap[domain]! : 1;
+
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext context) {
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          return Container(
+            padding: EdgeInsets.all(16.w),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('Select Value for $domain'),
+                Slider(
+                  value: selectedValue.toDouble(),
+                  min: 1,
+                  max: 9,
+                  divisions: 2,
+                  label: expertiseLevelMap[selectedValue]!,
+                  activeColor: AppColor.blueColor,
+                  onChanged: (double newvalue) {
+                    setState(() {
+                      selectedValue = newvalue.toInt();
+                    });
+                  },
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      expertiseMap[domain] = selectedValue;
+                      if (selectedValue > 0 && !expertiseArr.contains(domain)) {
+                        expertiseArr.add(domain);
+                      } else if (selectedValue == 0 && expertiseArr.contains(domain)) {
+                        expertiseArr.remove(domain);
+                      }
+                    });
+
+                    // Close the bottom sheet and execute the callback
+                    Navigator.pop(context, () {
+                      setState(() {});
+                    });
+                  },
+                 style: ElevatedButton.styleFrom(
+                    primary: AppColor.blueColor, // Set the background color of the button
+                  ),
+                  child: Text(
+                    'OK',
+                    style: TextStyle(
+                      color: Colors.white, // Set the text color of the button
+                      fontSize: 16.sp, // Adjust font size as needed
+                      fontFamily: 'Urbanist',
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    },
+  ).then((value) {
+    setState(() {});
+  });
 }
+}
+

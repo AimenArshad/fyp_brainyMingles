@@ -7,19 +7,22 @@ import 'package:brainy_mingles/widgets/custom_otpField.dart';
 import 'package:brainy_mingles/const/sizedbox_extension.dart';
 import 'package:brainy_mingles/view/home/home_page_view.dart';
 
+
 Future<void> verifyAndStoreStudent(
   String name,
   String username,
   String email,
   String phoneNumber,
   String password,
-  List<String> programmingDomains,
-  List<String> programmingLanguages,
-  List<String> challenges,
-  List<String> preferences,
+  List<Map<String, dynamic>> programmingDomains,
+  List<Map<String, dynamic>> programmingLanguages,
+  String gender,
+  String mode,
+  String  session,
+  String availability,
   int otp
 ) async {
-  const url = 'http://10.0.2.2:4200/api/student/add-student';
+  const url = 'http://192.168.10.42:4200/api/student/add-student';
 
   // Prepare the data to send to the backend
   final data = {
@@ -30,8 +33,10 @@ Future<void> verifyAndStoreStudent(
     'password': password,
     'programmingDomains': programmingDomains,
     'programmingLanguages': programmingLanguages,
-    'challenges': challenges,
-    'preferences': preferences,
+    'gender': gender,
+    'mode':mode,
+    'session':session,
+    'availability':availability,
     'otp': otp
   };
 
@@ -65,10 +70,12 @@ class InputScreen extends StatefulWidget {
   final String email;
   final String phoneNumber;
   final String password;
-  final List<String> domainArray;
-  final List<String> languagesArray;
-  final List<String> challengesArray;
-  final List<String> preferencesArray;
+  final List<Map<String, dynamic>> programmingDomains;
+  final List<Map<String, dynamic>> programmingLanguages;
+  final String gender;
+  final String mode;
+  final String session;
+  final String availability;
 
   const InputScreen({
     Key? key,
@@ -77,12 +84,12 @@ class InputScreen extends StatefulWidget {
     required this.email,
     required this.phoneNumber,
     required this.password,
-    required this.domainArray,
-    required this.languagesArray,
-    required this.challengesArray,
-    required this.preferencesArray
-
-    // Add any other variables here
+    required this.programmingDomains,
+    required this.programmingLanguages,
+    required this.mode,
+    required this.gender,
+    required this.session,
+    required this.availability, 
   }): super(key: key);
   @override
   State<InputScreen> createState() => _InputScreenState();
@@ -133,7 +140,13 @@ class _InputScreenState extends State<InputScreen> {
       body: ListView(
         padding: EdgeInsets.zero,
         children: [
-          Image.asset("assets/login_top_shape_2.png"),
+          Container(
+            width: double.infinity,
+            child: Image.asset(
+              "assets/login_top_shape_2.png",
+              fit: BoxFit.cover,
+            ),
+          ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: Column(
@@ -143,58 +156,57 @@ class _InputScreenState extends State<InputScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Center(child: Padding(
-        padding: EdgeInsets.only(top: 120.0),
-                    child: Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      CustomOTPField(
-        controller: _otpController1,
-        focusNode: _focusNode2,
-        onChanged: (value) {
-    if (value.length > 1) {
-      _otpController1.text = value.substring(0, 1); // Limit to one digit
-    }
-    _onOTPChanged(_otpController1.text, _otpController1, _focusNode2);
-  },
-      ),
-      SizedBox(width: 10.0),
-      CustomOTPField(
-        controller: _otpController2,
-        focusNode: _focusNode3,
-        onChanged: (value) {
-    if (value.length > 1) {
-      _otpController2.text = value.substring(0, 1); // Limit to one digit
-    }
-    _onOTPChanged(_otpController2.text, _otpController2, _focusNode3);
-  },
-      ),
-      SizedBox(width: 10.0),
-      CustomOTPField(
-        controller: _otpController3,
-        focusNode: _focusNode4,
-        onChanged: (value) {
-    if (value.length > 1) {
-      _otpController3.text = value.substring(0, 1); // Limit to one digit
-    }
-    _onOTPChanged(_otpController3.text, _otpController3, _focusNode4);
-  },
-      ),
-      SizedBox(width: 10.0),
-      CustomOTPField(
-        controller: _otpController4,
-        focusNode: _focusNode4, // No next focus node as it's the last box
-        onChanged: (value) {
-    if (value.length > 1) {
-      _otpController4.text = value.substring(0, 1); // Limit to one digit
-    }
-    _onOTPChanged(_otpController4.text, _otpController4, _focusNode4);
-  },
-      ),
-    ],
-  ),
-),
+                      padding: EdgeInsets.only(top: 120.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CustomOTPField(
+                            controller: _otpController1,
+                            focusNode: _focusNode2,
+                            onChanged: (value) {
+                        if (value.length > 1) {
+                          _otpController1.text = value.substring(0, 1); // Limit to one digit
+                        }
+                        _onOTPChanged(_otpController1.text, _otpController1, _focusNode2);
+                      },
+                          ),
+                          SizedBox(width: 10.0),
+                          CustomOTPField(
+                            controller: _otpController2,
+                            focusNode: _focusNode3,
+                            onChanged: (value) {
+                        if (value.length > 1) {
+                          _otpController2.text = value.substring(0, 1); // Limit to one digit
+                        }
+                        _onOTPChanged(_otpController2.text, _otpController2, _focusNode3);
+                      },
+                          ),
+                          SizedBox(width: 10.0),
+                          CustomOTPField(
+                            controller: _otpController3,
+                            focusNode: _focusNode4,
+                            onChanged: (value) {
+                        if (value.length > 1) {
+                          _otpController3.text = value.substring(0, 1); // Limit to one digit
+                        }
+                        _onOTPChanged(_otpController3.text, _otpController3, _focusNode4);
+                      },
+                          ),
+                          SizedBox(width: 10.0),
+                          CustomOTPField(
+                            controller: _otpController4,
+                            focusNode: FocusNode(), // No next focus node as it's the last box
+                            onChanged: (value) {
+                        if (value.length > 1) {
+                          _otpController4.text = value.substring(0, 1); // Limit to one digit
+                        }
+                        _onOTPChanged(_otpController4.text, _otpController4, FocusNode());
+                      },
+                          ),
+                        ],
+                      ),
+                    ),
                     )
-
                   ],
                 ),
                 15.h.sbh,
@@ -209,10 +221,12 @@ class _InputScreenState extends State<InputScreen> {
                       widget.email,
                       widget.phoneNumber,
                       widget.password,
-                      widget.domainArray,
-                      widget.languagesArray,
-                      widget.challengesArray,
-                      widget.preferencesArray,
+                      widget.programmingDomains,
+                      widget.programmingLanguages,
+                      widget.gender,
+                      widget.mode,
+                      widget.session,
+                      widget.availability,
                       otp,
                     );
                       Navigator.of(context).push(

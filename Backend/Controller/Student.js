@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import Mentors from '../Models/Mentor.js';
 import nodemailer from 'nodemailer';
 import BiddingRequest from '../Models/BiddingRequests.js';
+import Recommendation from '../Models/Recommendations.js'
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
@@ -64,7 +65,7 @@ const sendOTP = (email, otp, res) => {
 
 const verifyOTP = async (req, res) => {
   try {
-    const CheckOTP = tempOtp
+    const checkOTP = tempOtp
     // Check if the provided OTP matches the stored OTP
     try {
       const {
@@ -75,19 +76,14 @@ const verifyOTP = async (req, res) => {
         password,
         programmingDomains,
         programmingLanguages,
-        challenges,
-        preferences,
+        gender,
+        mode,
+        session,
+        availability,
         otp
       } = req.body;
   
-      console.log(name+username+email+phoneNumber+password)
-      console.log(programmingDomains)
-      console.log(programmingLanguages)
-      console.log(challenges)
-      console.log(preferences)
-      console.log(otp)
-      console.log(CheckOTP)
-      if (otp != CheckOTP) {
+      if (otp != checkOTP) {
         return res.status(400).json({ message: 'Invalid OTP' });
       }
 
@@ -101,20 +97,50 @@ const verifyOTP = async (req, res) => {
         email,
         phoneNumber,
         password: hashedPassword,
-        programmingDomains,
-        programmingLanguages,
-        challenges,
-        preferences: {
-          gender: preferences.gender,
-          mode: preferences.mode,
-          session: preferences.session,
-        }
+        domains: programmingDomains,
+        languages: programmingLanguages,
+        gender,
+        mode,
+        session,
+        availability
+        
       });
       await student.save();
       res.status(201).json({ message: 'Student registered successfully' });
 
+      if (res.statusCode === 201){
+
+        console.log("StudentRegisteredSuccessfully")
+        const studentDataJson = JSON.stringify(student);
+        const mentorsFromDB = await Mentors.find();
+        const mentorsDataJson = JSON.stringify(mentorsFromDB);
+        console.log(mentorsDataJson)
+        const pythonProcess = spawn('python', ['AI_model/mentor_recommendation.py', studentDataJson, mentorsDataJson]);
+
+        pythonProcess.stdout.on('data', async (data) => {
+          try {
+            const recommendations = JSON.parse(data);
+        
+            console.log(recommendations)
+            for (const studentId in recommendations) {
+              if (Object.hasOwnProperty.call(recommendations, studentId)) {
+                const recommendedMentors = recommendations[studentId];
+            
+                // Save recommendations to the database
+                await saveRecommendationsToDatabase(studentId, recommendedMentors);
+              }
+            }
+        
+          } catch (error) {
+            console.error('Error parsing Python output:', error);
+          }
+        });
+        
+
+
+      }
     // Clear the stored OTP after it has been used
-      tempOtp = '';
+    tempOtp = '';
 
   } catch (error) {
     console.error(error);
@@ -274,5 +300,35 @@ const verifyOTP = async (req, res) => {
   }
   }
 
+  const saveRecommendationsToDatabase = async (studentId, recommendedMentors) => {
+    try {
+      // Fetch the student data from the database using the Student model
+      const student = await Student.findById(studentId);
+  
+      // Check if the student exists
+      if (!student) {
+        console.error(`Student with ID ${studentId} not found.`);
+        return;
+      }
+  
+      // Fetch the mentor objects from the Mentor table based on the recommended mentor IDs
+      const mentors = await Mentors.find({ _id: { $in: recommendedMentors } });
+  
+      // Save recommendations to the database with the entire mentor objects
+      const recommendation = new Recommendation({
+        studentId: studentId,
+        mentors: mentors.map(mentor => ({
+          mentorObject: mentor,
+        })),
+      });
+  
+      await recommendation.save();
+      console.log(`Recommendations for student ${studentId} saved to database`);
+  
+    } catch (error) {
+      console.error('Error saving recommendations to database:', error);
+    }
+  };
+  
 
   export {verifyEmail,verifyOTP,createSessionRequest,findMentors,getMyDetails,makeABid}

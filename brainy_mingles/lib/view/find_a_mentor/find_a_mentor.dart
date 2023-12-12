@@ -6,12 +6,13 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:brainy_mingles/view/find_a_mentor/arrange_a_session.dart';
 import 'package:brainy_mingles/view/Bidding/bid-a-mentor.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:brainy_mingles/const/app_colors.dart';
 import 'package:brainy_mingles/widgets/custom_appbar.dart';
 import 'package:brainy_mingles/widgets/custom_textfield.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:brainy_mingles/widgets/custom_drawer.dart';
+
 
 class FindAMentorView extends StatefulWidget {
   const FindAMentorView({Key? key});
@@ -29,14 +30,30 @@ class _FindAMentorViewState extends State<FindAMentorView> {
     fetchMentors();
   }
 
+ Future<String?> retrieveToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token');
+  }
+
+  Future<String?> retrieveId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('studentId');
+  }
+
   Future<void> fetchMentors() async {
+    final String? token = await retrieveToken();
+    final String? studentId = await retrieveId();
+    print(studentId);
     final response = await http
-        .get(Uri.parse('http://10.0.2.2:4200/api/student/find-mentors'));
+        .get(Uri.parse('http://192.168.10.42:4200/api/student/$studentId/displayRecommendations'),
+        headers: {
+          "Authorization": "Bearer $token",
+        },);
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       setState(() {
-        mentorsData = data;
+        mentorsData = data['mentors'];
       });
     } else {
       throw Exception('Failed to load mentors');
@@ -102,9 +119,7 @@ class _FindAMentorViewState extends State<FindAMentorView> {
                 return MentorBox(
                   name: mentor['name'].toString(),
                   email: mentor['email'],
-                  expertise: (mentor['expertise'] as List<dynamic>)
-                      .cast<String>()
-                      .join(", "),
+                  gender:mentor['gender'],
                   budget: mentor['budget'].toString(),
                 );
               },
@@ -119,12 +134,12 @@ class _FindAMentorViewState extends State<FindAMentorView> {
 class MentorBox extends StatefulWidget {
   final String name;
   final String email;
-  final String expertise;
+  final String gender;
   final String budget;
 
   const MentorBox({
     required this.name,
-    required this.expertise,
+    required this.gender,
     required this.email,
     required this.budget,
     Key? key,
@@ -199,7 +214,7 @@ class _MentorBoxState extends State<MentorBox> {
                     ),
                   ),
                   Text(
-                    widget.expertise,
+                    widget.gender,
                     style: TextStyle(
                       color: const Color(0xFF3A2F2F),
                       fontSize: 12.sp,

@@ -5,6 +5,7 @@ import 'package:brainy_mingles/view/sign_up_student/signup_student_two.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+
 class SignUpStudent extends StatefulWidget {
   const SignUpStudent({super.key});
 
@@ -80,3 +81,6 @@ class _SignUpStudentState extends State<SignUpStudent> {
     );
   }
 }
+
+
+

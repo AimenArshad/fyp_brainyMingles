@@ -45,7 +45,8 @@ const loginUser = async (req, res) => {
           res.send(err)
         }
 
-  
+        const userId = user._id
+        res.status(200).json({ role, email,token, userId });
       res.status(200).json({ role, email,token });
     } catch (error) {
       console.error(error);

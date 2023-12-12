@@ -23,26 +23,45 @@ const studentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  programmingDomains: {
-    type: [String],
-  },
-  programmingLanguages: {
-    type: [String],
-  },
-  challenges: {
-    type: [String
-    ],
-  },
-  preferences: {
-    gender: {
-      type: [String],
+  domains: [
+    {
+      name: {
+        type: String,
+        required: true,
+      },
+      difficultyLevel: {
+        type: Number,
+        required: true,
+      },
     },
-    mode: {
-      type: [String],
+  ],
+  languages: [
+    {
+      name: {
+        type: String,
+        required: true,
+      },
+      difficultyLevel: {
+        type: Number,
+        required: true,
+      },
     },
-    session: {
-      type: [String],
-    },
+  ],
+  gender: {
+    type: String,
+    required: true,
+  },
+  mode: {
+    type: String,
+    required: true,
+  },
+  session: {
+    type: String,
+    required: true,
+  },
+  availability: {
+    type: String,
+    required: true,
   },
 });
 

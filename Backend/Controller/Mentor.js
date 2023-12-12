@@ -71,7 +71,7 @@ const sendOTP = (email, otp, res) => {
 
 const verifyOTP = async (req, res) => {
   try {
-    const CheckOTP = tempOtp
+    const checkOTP = tempOtp
     // Check if the provided OTP matches the stored OTP
     try {
       const {
@@ -83,12 +83,14 @@ const verifyOTP = async (req, res) => {
         password,
         programmingDomains,
         programmingLanguages,
-        challenges,
-        preferences,
+        gender,
+        mode,
+        session,
+        availability,
         otp
       } = req.body;
   
-      if (otp != CheckOTP) {
+      if (otp != checkOTP) {
         return res.status(400).json({ message: 'Invalid OTP' });
       }
 
@@ -96,27 +98,25 @@ const verifyOTP = async (req, res) => {
       const hashedPassword = await bcrypt.hash(password, saltRounds);
       const mentorUsername = username + 'S01';
   
-      const MentorshipRequest = new MentorshipRequest({
+      const MentorshipRequestInstance = new MentorshipRequest({
         name,
         username: mentorUsername,
         email,
         phoneNumber,
         budget,
         password: hashedPassword,
-        programmingDomains,
-        programmingLanguages,
-        challenges,
-        preferences: {
-          gender: preferences.gender,
-          mode: preferences.mode,
-          session: preferences.session,
-        }
+        domains : programmingDomains,
+        languages : programmingLanguages,
+        gender,
+        mode,
+        session,
+        availability
       });
-      await MentorshipRequest.save();
-      res.status(201).json({ message: 'Mentor registered successfully' });
+      await MentorshipRequestInstance.save();
+      res.status(201).json({ message: 'Mentor Request Submitted successfully' });
 
     // Clear the stored OTP after it has been used
-      tempOtp = '';
+    tempOtp = '';
 
   } catch (error) {
     console.error(error);
@@ -126,7 +126,6 @@ const verifyOTP = async (req, res) => {
     console.error(error);
   }
 };
-
 
 const mentorshipRequests = async (req, res) => {
     try {

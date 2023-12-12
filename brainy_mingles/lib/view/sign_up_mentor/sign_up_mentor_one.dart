@@ -28,7 +28,13 @@ class _SignUpMentorOneState extends State<SignUpMentorOne> {
       body: ListView(
         padding: EdgeInsets.zero,
         children: [
-          Image.asset("assets/login_top_shape.png"),
+          Container(
+            width: double.infinity,
+            child: Image.asset(
+              "assets/login_top_shape.png",
+              fit: BoxFit.cover,
+            ),
+          ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: Column(

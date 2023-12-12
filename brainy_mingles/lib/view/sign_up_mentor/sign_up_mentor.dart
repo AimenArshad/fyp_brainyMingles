@@ -5,7 +5,6 @@ import 'package:brainy_mingles/view/sign_up_mentor/sign_up_mentor_two.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 class SignUpMentor extends StatefulWidget {
   const SignUpMentor({super.key});
 
