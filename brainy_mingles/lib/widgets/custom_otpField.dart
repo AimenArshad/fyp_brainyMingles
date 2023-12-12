@@ -7,6 +7,7 @@ class CustomOTPField extends StatelessWidget {
   final TextEditingController controller;
   final FocusNode focusNode;
   final ValueChanged<String>? onChanged;
+  
 
   CustomOTPField({
     required this.controller,

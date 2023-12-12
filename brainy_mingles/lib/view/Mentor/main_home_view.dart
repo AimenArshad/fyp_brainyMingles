@@ -5,6 +5,8 @@ import 'package:brainy_mingles/view/Bidding/accept-request-bid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:brainy_mingles/view/VideoCalling/video_call.dart';
+import 'package:brainy_mingles/view/sessions_request/my-sesssions.dart';
 
 class MainHomeViewMentor extends StatefulWidget {
   const MainHomeViewMentor({super.key});
@@ -18,9 +20,9 @@ List<Widget> pages = [
   BiddingRequest(),
   //SessionRequest(),
   SessionRequest(),
-  SessionRequest(),
-  SessionRequest(),
-  SessionRequest(),
+  AcceptedSessionRequest(),
+  AcceptedSessionRequest(),
+  VideoCall()
 ];
 
 class _MainHomeViewState extends State<MainHomeViewMentor> {

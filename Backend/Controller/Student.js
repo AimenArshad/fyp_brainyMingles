@@ -127,77 +127,13 @@ const verifyOTP = async (req, res) => {
 
   
   const createSessionRequest = async (req, res) => {
-  //   try {
-  //     const { mentorEmail, sessions } = req.body;
-  //     const studentEmail=req.body.email;
-  //     console.log(studentEmail)
-    
-  //     console.log(sessions)
-  //     const sessionRequests={
-  //         studentEmail:studentEmail,
-  //         sessions: sessions
-  //     }
-  //     // Find the existing session request for the mentor
-  //     let existingSessionRequest = await SessionRequest.findOne({ mentorEmail });
-  
-  //     // If there's no existing session request, create a new one
-  //     if (!existingSessionRequest) {
-  //       existingSessionRequest = new SessionRequest({
-  //         mentorEmail,
-  //         sessionRequests: [],
-  //       });
-  //     }
-  
-  //     // Iterate through the new session requests
-  //     for (const newRequest of sessionRequests) {
-  //       const { studentEmail, sessionType, time, topic } = newRequest;
-  
-  //       // Check if the student email already exists in the existing session requests
-  //       const existingStudentRequest = existingSessionRequest.sessionRequests.find(
-  //         (request) => request.studentEmail === studentEmail
-  //       );
-  
-  //       if (existingStudentRequest) {
-  //         // Increment the session limit for the existing student
-  //         if (existingStudentRequest.sessionLimit) {
-  //           existingStudentRequest.sessionLimit += 1;
-  //         } else {
-  //           existingStudentRequest.sessionLimit = 1;
-  //         }
-  
-  //         // Check if the session limit is not exceeded
-  //         if (existingStudentRequest.sessionLimit > 3) {
-  //           // The session limit is exceeded for this student, return an error message
-  //           return res.status(400).json({ error: 'Session request limit reached for this student' });
-  //         }
-  
-  //         // Add the new session to the existing student's request
-  //         existingStudentRequest.sessions.push({ sessionType, time, topic });
-  //       } else {
-  //         // If the student email doesn't exist, create a new student request
-  //         existingSessionRequest.sessionRequests.push({
-  //           studentEmail,
-  //           sessionLimit: 1, // Initialize the session limit for the new student
-  //           sessions: [{ sessionType, time, topic }],
-  //         });
-  //       }
-  //     }
-  
-  //     // Save the updated session request to the database
-  //     await existingSessionRequest.save();
-  
-  //     res.status(201).json({ message: 'Session request updated successfully' });
-  //   } catch (error) {
-  //     console.error(error);
-  //     res.status(500).send('Server error');
-  //   }
-  // };
-  
-try {
+
+  try {
     const { mentorEmail, sessions } = req.body;
     const studentEmail = req.body.email;
-    console.log(studentEmail)
-    console.log(sessions)
+    console.log(studentEmail);
+    console.log(sessions);
+
     // Find the existing session request for the mentor
     let existingSessionRequest = await SessionRequest.findOne({ mentorEmail });
 
@@ -209,41 +145,62 @@ try {
       });
     }
 
-    // Iterate through the new session requests
-    for (const newRequest of sessions) {
-      const { sessionType, time, topic } = newRequest;
+    // Check if the student email already exists in the existing session requests
+    const existingStudentRequestIndex = existingSessionRequest.sessionRequests.findIndex(
+      (request) => request.studentEmail === studentEmail
+    );
 
-      // Check if the student email already exists in the existing session requests
-      const existingStudentRequestIndex = existingSessionRequest.sessionRequests.findIndex(
-        (request) => request.studentEmail === studentEmail
-      );
-
-      if (existingStudentRequestIndex !== -1) {
-        // Add the new session to the existing student's request
-        existingSessionRequest.sessionRequests[existingStudentRequestIndex].sessions.push({
-          sessionType,
-          time,
-          topic,
-        });
-      } else {
-        // If the student email doesn't exist, create a new student request
-        existingSessionRequest.sessionRequests.push({
-          studentEmail,
-          sessions: [{ sessionType, time, topic }],
-        });
+    if (existingStudentRequestIndex !== -1) {
+      // Check if the user has reached the session limit (3 sessions)
+      const sessionLimit = existingSessionRequest.sessionRequests[existingStudentRequestIndex].sessionLimit;
+      if (sessionLimit >= 3) {
+        // User has reached the session limit
+        return res.status(400).json({ message: 'You have reached your free session limit' });
       }
-    }
 
-    // Save the updated session request to the database
-    await existingSessionRequest.save();
+      // Iterate through the new session requests
+      for (const newRequest of sessions) {
+        const { sessionType, time, topic } = newRequest;
+
+        // Check if the user has already requested a session for this topic
+        const topicExists = existingSessionRequest.sessionRequests[existingStudentRequestIndex].sessions.some(
+          (session) => session.topic === topic
+        );
+
+        if (!topicExists) {
+          // Add the new session to the existing student's request
+          existingSessionRequest.sessionRequests[existingStudentRequestIndex].sessions.push({
+            sessionType,
+            time,
+            topic,
+          });
+
+          // Increment the session limit
+          existingSessionRequest.sessionRequests[existingStudentRequestIndex].sessionLimit += 1;
+        }
+      }
+
+      // Save the updated session request to the database
+      await existingSessionRequest.save();
+    } else {
+      // If the student email doesn't exist, create a new student request
+      existingSessionRequest.sessionRequests.push({
+        studentEmail,
+        sessionLimit: 1, // Initialize the session limit to 1 for a new user
+        sessions,
+      });
+
+      // Save the new session request to the database
+      await existingSessionRequest.save();
+    }
 
     res.status(201).json({ message: 'Session request updated successfully' });
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');
   }
-}
-  
+};
+
   
   
   const findMentors = async (req, res) => {

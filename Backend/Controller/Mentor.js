@@ -6,6 +6,8 @@ import nodemailer from 'nodemailer';
 import Mentors from '../Models/Mentor.js';
 import BiddingRequest from '../Models/BiddingRequests.js';
 import AcceptedBids from '../Models/AcceptedBids.js';
+
+import AcceptedSessions from '../Models/AcceptedSessions.js';
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
@@ -216,42 +218,114 @@ try{
 
 
 const acceptSessionRequest = async (req, res) => {
-  try {
-    const { studentEmail, sessionType, topic, time } = req.body;
-       const mentorEmail=req.body.email;
-    // Find the session request for the mentor
-    let existingSessionRequest = await SessionRequest.findOne({ mentorEmail });
+  // try {
+  //   const { studentEmail, sessionType, topic, time } = req.body;
+  //      const mentorEmail=req.body.email;
+  //   // Find the session request for the mentor
+  //   let existingSessionRequest = await SessionRequest.findOne({ mentorEmail });
 
-    if (existingSessionRequest) {
-      // Find the student request in the session request based on studentEmail
-      const sessionRequest = existingSessionRequest.sessionRequests.find(
-        (request) => request.studentEmail === studentEmail
-      );
+  //   if (existingSessionRequest) {
+  //     // Find the student request in the session request based on studentEmail
+  //     const sessionRequest = existingSessionRequest.sessionRequests.find(
+  //       (request) => request.studentEmail === studentEmail
+  //     );
 
-      if (sessionRequest) {
-        // Remove the session detail requested based on sessionType, topic, and time
-        sessionRequest.sessions = sessionRequest.sessions.filter(
-          (session) =>
-            session.sessionType !== sessionType ||
-            session.topic !== topic ||
-            session.time !== time
+  //     if (sessionRequest) {
+  //       // Remove the session detail requested based on sessionType, topic, and time
+  //       sessionRequest.sessions = sessionRequest.sessions.filter(
+  //         (session) =>
+  //           session.sessionType !== sessionType ||
+  //           session.topic !== topic ||
+  //           session.time !== time
+  //       );
+
+  //       // Save the changes to the database
+  //       await existingSessionRequest.save();
+
+  //       res.status(200).json({ message: 'Session request accepted successfully' });
+  //     } else {
+  //       res.status(404).json({ message: 'No session request found for the student' });
+  //     }
+  //   } else {
+  //     res.status(404).json({ message: 'No session request found for the mentor' });
+  //   }
+  // } catch (error) {
+  //   console.error(error);
+  //   res.status(500).send('Server error');
+  // }
+
+    try {
+      const { studentEmail, sessionType, topic, time } = req.body;
+      const mentorEmail = req.body.email;
+  
+      // Find the session request for the mentor
+      let existingSessionRequest = await SessionRequest.findOne({ mentorEmail });
+  
+      if (existingSessionRequest) {
+        // Find the student request in the session request based on studentEmail
+        const sessionRequest = existingSessionRequest.sessionRequests.find(
+          (request) => request.studentEmail === studentEmail
         );
-
-        // Save the changes to the database
-        await existingSessionRequest.save();
-
-        res.status(200).json({ message: 'Session request accepted successfully' });
+  
+        if (sessionRequest) {
+          // Remove the session detail requested based on sessionType, topic, and time
+          const acceptedSession = {
+            sessionType,
+            time,
+            topic,
+          };
+  
+          // Save the accepted session to the AcceptedSessions schema
+          let acceptedSessions = await AcceptedSessions.findOne({ mentorEmail });
+  
+          if (!acceptedSessions) {
+            acceptedSessions = new AcceptedSessions({
+              mentorEmail,
+              sessionRequests: [],
+            });
+          }
+  
+          // Find the student request in the accepted session
+          const acceptedSessionRequest = acceptedSessions.sessionRequests.find(
+            (request) => request.studentEmail === studentEmail
+          );
+  
+          if (acceptedSessionRequest) {
+            acceptedSessionRequest.sessions.push(acceptedSession);
+          } else {
+            acceptedSessions.sessionRequests.push({
+              studentEmail,
+              sessions: [acceptedSession],
+            });
+          }
+  
+          // Save the changes to the AcceptedSessions schema
+          await acceptedSessions.save();
+  
+          // Remove the session detail from the session request
+          sessionRequest.sessions = sessionRequest.sessions.filter(
+            (session) =>
+              session.sessionType !== sessionType ||
+              session.topic !== topic ||
+              session.time !== time
+          );
+  
+          // Save the changes to the SessionRequest schema
+          await existingSessionRequest.save();
+  
+          res.status(200).json({ message: 'Session request accepted successfully' });
+        } else {
+          res.status(404).json({ message: 'No session request found for the student' });
+        }
       } else {
-        res.status(404).json({ message: 'No session request found for the student' });
+        res.status(404).json({ message: 'No session request found for the mentor' });
       }
-    } else {
-      res.status(404).json({ message: 'No session request found for the mentor' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Server error');
     }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Server error');
-  }
-};
+  };
+  
 
 
 
@@ -509,7 +583,96 @@ const rejectBiddingRequest = async (req, res) => {
 };
 
 
+const mySingleSessions = async (req, res) => {
+  try{
+    const mentorEmail = req.body.email; // Assuming the mentor's email is in the request's user object
+    console.log(mentorEmail)
+    // Find the session requests for the mentor
+    const sessionRequests = await AcceptedSessions.findOne({ mentorEmail });
+    console.log(sessionRequests)
+    if (!sessionRequests) {
+      return res.status(404).json({ error: 'No session requests found for this mentor' });
+    }
   
+    const requestsData = [];
+  
+    for (const request of sessionRequests.sessionRequests) {
+      // Fetch student name from the Student schema based on student email
+      const student = await Student.findOne({ email: request.studentEmail });
+  
+      if (!student) {
+        return res.status(404).json({ error: 'Student not found' });
+      }
+  
+      // Create an array to store all sessions for this student
+      const sessionsData = [];
+  
+      for (const session of request.sessions) {
+        sessionsData.push({
+          sessionType: session.sessionType,
+          time: session.time,
+          topic: session.topic,
+        });
+      }
+  
+      // Add student's data and their sessions to the response
+      requestsData.push({
+        studentName: student.name,
+        studentEmail: request.studentEmail,
+        sessions: sessionsData,
+      });
+    }
+  
+    res.status(200).json(requestsData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+  }
+
+  
+const rejectAcceptedSessions  = async (req, res) => {
+
+  try {
+    const {  studentEmail, sessionType, topic, time } = req.body;
+      const mentorEmail=req.body.email;
+      console.log(mentorEmail)
+    // Find the session request for the mentor
+    let existingSessionRequest = await AcceptedSessions.findOne({ mentorEmail });
+
+    if (existingSessionRequest) {
+      // Find the student request in the session request based on studentEmail
+      const sessionRequest = existingSessionRequest.sessionRequests.find(
+        (request) => request.studentEmail === studentEmail
+      );
+
+      if (sessionRequest) {
+        // Remove the session detail requested based on sessionType, topic, and time
+        sessionRequest.sessions = sessionRequest.sessions.filter(
+          (session) =>
+            session.sessionType !== sessionType ||
+            session.topic !== topic ||
+            session.time !== time
+        );
+
+        // Save the changes to the database
+        await existingSessionRequest.save();
+
+        res.status(200).json({ message: 'Session request rejected successfully' });
+      } else {
+        res.status(404).json({ message: 'No session request found for the student' });
+      }
+    } else {
+      res.status(404).json({ message: 'No session request found for the mentor' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error');
+  }
+};
+
+
+
 
   export {verifyEmail,verifyOTP,studentsessionRequests,acceptSessionRequest,rejectSessionRequest,studentsBiddingRequests,
-  acceptBiddingRequest,rejectBiddingRequest}
+  acceptBiddingRequest,rejectBiddingRequest,rejectAcceptedSessions,mySingleSessions}

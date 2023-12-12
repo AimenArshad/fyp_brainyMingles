@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const sessionRequestSchema = new mongoose.Schema({
+const acceptedSessionRequestSchema = new mongoose.Schema({
   mentorEmail: {
     type: String,
     required: true,
@@ -9,10 +9,6 @@ const sessionRequestSchema = new mongoose.Schema({
     {
       studentEmail: {
         type: String,
-        required: true,
-      },
-      sessionLimit: {
-        type: Number, // You can set an appropriate data type for the limit (e.g., Number)
         required: true,
       },
       sessions: [
@@ -35,6 +31,6 @@ const sessionRequestSchema = new mongoose.Schema({
   ],
 });
 
-const SessionRequest = mongoose.model('SessionRequest', sessionRequestSchema);
+const AcceptedSessions = mongoose.model('AcceptedSessions', acceptedSessionRequestSchema);
 
-export default SessionRequest;
+export default AcceptedSessions;
