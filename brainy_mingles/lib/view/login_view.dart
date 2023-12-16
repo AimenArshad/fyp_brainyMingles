@@ -69,7 +69,7 @@ class _LoginViewState extends State<LoginView> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.10.42:4200/api/login'),
+        Uri.parse('http://10.0.2.2:4200/api/login'),
         body: jsonEncode(loginData),
         headers: {"Content-Type": "application/json"},
       );

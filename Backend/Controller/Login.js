@@ -7,7 +7,7 @@ import jwt from'jsonwebtoken';
 const loginUser = async (req, res) => {
     try {
       const { email, password } = req.body;
-  
+      console.log(email)
       // Try to find the user in each relevant collection
       const student = await Student.findOne({ email });
       const mentor = await Mentors.findOne({ email });
@@ -47,7 +47,7 @@ const loginUser = async (req, res) => {
 
         const userId = user._id
         res.status(200).json({ role, email,token, userId });
-      res.status(200).json({ role, email,token });
+      //res.status(200).json({ role, email,token });
     } catch (error) {
       console.error(error);
       res.status(500).send('Server error');

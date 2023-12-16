@@ -10,7 +10,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 Future<void> sendEmail(String email) async {
-  const url = 'http://192.168.10.42:4200/api/mentor/sendOtp';
+  const url = 'http://10.0.2.2:4200/api/mentor/sendOtp';
 
   // Prepare the data to send to the backend
   final data = {

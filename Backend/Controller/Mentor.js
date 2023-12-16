@@ -217,41 +217,6 @@ try{
 
 
 const acceptSessionRequest = async (req, res) => {
-  // try {
-  //   const { studentEmail, sessionType, topic, time } = req.body;
-  //      const mentorEmail=req.body.email;
-  //   // Find the session request for the mentor
-  //   let existingSessionRequest = await SessionRequest.findOne({ mentorEmail });
-
-  //   if (existingSessionRequest) {
-  //     // Find the student request in the session request based on studentEmail
-  //     const sessionRequest = existingSessionRequest.sessionRequests.find(
-  //       (request) => request.studentEmail === studentEmail
-  //     );
-
-  //     if (sessionRequest) {
-  //       // Remove the session detail requested based on sessionType, topic, and time
-  //       sessionRequest.sessions = sessionRequest.sessions.filter(
-  //         (session) =>
-  //           session.sessionType !== sessionType ||
-  //           session.topic !== topic ||
-  //           session.time !== time
-  //       );
-
-  //       // Save the changes to the database
-  //       await existingSessionRequest.save();
-
-  //       res.status(200).json({ message: 'Session request accepted successfully' });
-  //     } else {
-  //       res.status(404).json({ message: 'No session request found for the student' });
-  //     }
-  //   } else {
-  //     res.status(404).json({ message: 'No session request found for the mentor' });
-  //   }
-  // } catch (error) {
-  //   console.error(error);
-  //   res.status(500).send('Server error');
-  // }
 
     try {
       const { studentEmail, sessionType, topic, time } = req.body;
@@ -482,13 +447,7 @@ const acceptBiddingRequest = async (req, res) => {
         );
 
         if (existingStudentRequest) {
-          // If the student already exists, check if the course is different
-          //const existingBid = existingStudentRequest.bids.find((bid) => bid.course === course);
-
-          // if (existingBid) {
-          //   // If the course is the same, do not add a new record
-          //   return res.status(400).json({ message: 'Bidding request already accepted for the same course' });
-         // } else {
+         
             // If the course is different, push the new bid into the existing student request
             existingStudentRequest.bids.push({
               budget,

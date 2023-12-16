@@ -45,7 +45,7 @@ class _FindAMentorViewState extends State<FindAMentorView> {
     final String? studentId = await retrieveId();
     print(studentId);
     final response = await http
-        .get(Uri.parse('http://192.168.10.42:4200/api/student/$studentId/displayRecommendations'),
+        .get(Uri.parse('http://10.0.2.2:4200/api/student/$studentId/displayRecommendations'),
         headers: {
           "Authorization": "Bearer $token",
         },);

@@ -3,6 +3,7 @@ import Mentor from '../Models/Mentor.js';
 import Faculty from '../Models/Faculty.js'
 import bcrypt from 'bcrypt';
 import nodemailer from 'nodemailer';
+import Student from '../Models/Student.js';
 import { spawn } from 'child_process';
 import Recommendation from '../Models/Recommendations.js';
   

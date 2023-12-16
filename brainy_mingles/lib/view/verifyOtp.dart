@@ -22,7 +22,7 @@ Future<void> verifyAndStoreStudent(
   String availability,
   int otp
 ) async {
-  const url = 'http://192.168.10.42:4200/api/student/add-student';
+  const url = 'http://10.0.2.2:4200/api/student/add-student';
 
   // Prepare the data to send to the backend
   final data = {

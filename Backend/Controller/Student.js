@@ -157,6 +157,7 @@ const verifyOTP = async (req, res) => {
   try {
     const { mentorEmail, sessions } = req.body;
     const studentEmail = req.body.email;
+    console.log(mentorEmail)
     console.log(studentEmail);
     console.log(sessions);
 
@@ -192,7 +193,9 @@ const verifyOTP = async (req, res) => {
         const topicExists = existingSessionRequest.sessionRequests[existingStudentRequestIndex].sessions.some(
           (session) => session.topic === topic
         );
-
+        if (topicExists) {
+          return res.status(400).json({ message: 'Failed, duplicates' });
+        }
         if (!topicExists) {
           // Add the new session to the existing student's request
           existingSessionRequest.sessionRequests[existingStudentRequestIndex].sessions.push({
@@ -219,8 +222,8 @@ const verifyOTP = async (req, res) => {
       // Save the new session request to the database
       await existingSessionRequest.save();
     }
+    res.status(201).json({ message: 'Session request created successfully' });
 
-    res.status(201).json({ message: 'Session request updated successfully' });
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');
@@ -232,6 +235,7 @@ const verifyOTP = async (req, res) => {
   const findMentors = async (req, res) => {
     try {
       const mentors = await Mentors.find().select('name email expertise budget');
+      console.log(mentors)
       res.status(200).json(mentors);
     } catch (error) {
       console.error(error);
