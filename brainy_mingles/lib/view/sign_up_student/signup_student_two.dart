@@ -460,7 +460,7 @@ class _SignUpStudentTwoState extends State<SignUpStudentTwo> {
                       });
                     },
                     style: ElevatedButton.styleFrom(
-                      primary: AppColor
+                      backgroundColor: AppColor //chmged
                           .blueColor, // Set the background color of the button
                     ),
                     child: Text(

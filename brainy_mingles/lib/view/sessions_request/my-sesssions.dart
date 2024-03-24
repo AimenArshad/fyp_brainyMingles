@@ -144,45 +144,6 @@ class AcceptedSessionRequestBox extends StatelessWidget {
     required this.fetchDataCallback,
   });
 
-  // Future<void> acceptRequest() async {
-  //   Future<String?> retrieveToken() async {
-  //     SharedPreferences prefs = await SharedPreferences.getInstance();
-  //     return prefs.getString('token');
-  //   }
-
-  //   final requestData = {
-  //     "studentEmail": studentEmail,
-  //     "sessionType": sessionType,
-  //     "time": time,
-  //     "topic": topic // Send the student's email
-  //   };
-  //   final String? token = await retrieveToken();
-  //   print(token);
-  //   if (token != null) {
-  //     final response = await http.post(
-  //       Uri.parse('http://10.0.2.2:4200/api/mentor/accept-AcceptedSessionRequest'),
-  //       body: jsonEncode(requestData),
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         "Authorization": "Bearer $token",
-  //       },
-  //     );
-
-  //     if (response.statusCode == 200) {
-  //       // Session request accepted successfully
-  //       print(
-  //           'Session request accepted successfully'); // Notfication should be sent to the student of bid request accepted.
-  //       fetchDataCallback(); // Call the callback to update the data
-  //     } else {
-  //       // Handle the error (e.g., show an error message)
-  //       print('Session request acceptance failed');
-  //     }
-  //   } else {
-  //     // Handle the case where the token is not available
-  //     print('Token not available');
-  //   }
-  // }
-
   Future<void> declineRequest() async {
     Future<String?> retrieveToken() async {
       SharedPreferences prefs = await SharedPreferences.getInstance();

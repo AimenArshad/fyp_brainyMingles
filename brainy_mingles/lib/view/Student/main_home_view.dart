@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:brainy_mingles/view/dashboard/dashboard_view.dart';
 import 'package:brainy_mingles/view/VideoCalling/video_call.dart';
+import 'package:brainy_mingles/view/FindFypMember/show-members.dart';
 
 class MainHomeViewStudent extends StatefulWidget {
   const MainHomeViewStudent({super.key});
@@ -16,7 +17,7 @@ class MainHomeViewStudent extends StatefulWidget {
 
 List<Widget> pages = [
   //DashboardView(),
-  FindAMentorView(),
+  GetYourMember(),
   FindAMentorView(),
   FindAMentorView(),
   FindAMentorView(),

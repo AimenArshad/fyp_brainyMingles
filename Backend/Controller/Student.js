@@ -1,10 +1,12 @@
 import SessionRequest from '../Models/SessionRequests.js';
 import Student from '../Models/Student.js'
 import bcrypt from 'bcrypt';
+import { spawn } from 'child_process';
 import Mentors from '../Models/Mentor.js';
 import nodemailer from 'nodemailer';
 import BiddingRequest from '../Models/BiddingRequests.js';
 import Recommendation from '../Models/Recommendations.js'
+import FypStudent from '../Models/FYPStudents.js';
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
@@ -335,4 +337,320 @@ const verifyOTP = async (req, res) => {
   };
   
 
-  export {verifyEmail,verifyOTP,createSessionRequest,findMentors,getMyDetails,makeABid}
+
+//   //Document
+
+//   import AWS from 'aws-sdk';
+
+// // Configure AWS SDK with your credentials
+// AWS.config.update({
+//   accessKeyId: 'AKIAU6GDZV4MDBX47FNI',
+//   secretAccessKey: '/2Gkuc38aeBBy3ZvOts/tNbe+CKt7Lo/u0zXyXFk',
+//   region: 'us-east-1'
+// });
+
+// const s3 = new AWS.S3();
+
+// // correct-bucket name
+// const createBucket = (req, res) => {
+//   const bucketName = req.body.bucketName; // Assuming the bucket name is sent in the request body
+
+//   // Create the bucket
+//   s3.headBucket({ Bucket: bucketName }, (err, data) => {
+//     if (err && err.code === 'NotFound') {
+//       // Bucket does not exist, proceed with creation
+//       s3.createBucket({ Bucket: bucketName }, (err, data) => {
+//         if (err) {
+//           console.error('Error creating bucket:', err);
+//           res.status(500).json({ error: 'Failed to create bucket' });
+//         } else {
+//           console.log('Bucket created successfully:', data.Location);
+          
+//           // Create a new bucket document in MongoDB
+//           const newBucket = new Bucket({ name: bucketName });
+//           newBucket.save()
+//             .then(() => {
+//               console.log('Bucket document saved in MongoDB');
+//               res.status(201).json({ message: 'Bucket created successfully', location: data.Location });
+//             })
+//             .catch(error => {
+//               console.error('Error saving bucket document:', error);
+//               res.status(500).json({ error: 'Failed to save bucket document' });
+//             });
+//         }
+//       });
+//     } else if (err) {
+//       // Other error occurred
+//       console.error('Error checking bucket existence:', err);
+//       res.status(500).json({ error: 'Failed to check bucket existence' });
+//     } else {
+//       // Bucket already exists
+//       console.log('Bucket already exists:', bucketName);
+//       res.status(200).json({ message: 'Bucket already exists', location: bucketName });
+//     }
+//   });
+// };
+
+// // corrected upload file
+// const uploadFileToS3 = (req, res) => {
+//   const bucketName = req.body.bucketName;
+//   console.log(bucketName) // Assuming the bucket name is sent in the request body
+//   const file = req.file; // Assuming the file is uploaded using multer middleware
+
+//   if (!bucketName) {
+//     return res.status(400).json({ error: 'Bucket name is required' });
+//   }
+
+//   // Check if the bucket exists
+//   s3.headBucket({ Bucket: bucketName }, (err, data) => {
+//     if (err && err.code === 'NotFound') {
+//       // Bucket does not exist, return error
+//       return res.status(404).json({ error: 'Bucket does not exist' });
+//     } else if (err) {
+//       // Other error occurred
+//       console.error('Error checking bucket existence:', err);
+//       return res.status(500).json({ error: 'Failed to check bucket existence' });
+//     }
+
+//     // If the bucket exists, upload the file
+//     const params = {
+//       Bucket: bucketName,
+//       Key: file.originalname, // Set the key (filename) in S3 to be the same as the original filename
+//       Body: file.buffer // Set the file data
+//     };
+
+//     s3.upload(params, (err, data) => {
+//       if (err) {
+//         console.error('Error uploading file to S3:', err);
+//         return res.status(500).json({ error: 'Failed to upload file to S3' });
+//       }
+
+//       console.log('File uploaded successfully to:', data.Location);
+
+//       // Update the MongoDB bucket document with the file information
+//       Bucket.findOneAndUpdate(
+//         { name: bucketName },
+//         { $push: { files: { fileName: file.originalname, fileLocation: data.Location } } },
+//         { new: true }
+//       )
+//         .then(updatedBucket => {
+//           console.log('File added to bucket:', updatedBucket);
+//           res.status(201).json({ message: 'File uploaded successfully', location: data.Location });
+//         })
+//         .catch(error => {
+//           console.error('Error updating bucket document:', error);
+//           res.status(500).json({ error: 'Failed to update bucket document' });
+//         });
+//     });
+//   });
+// };
+
+
+// // const getDocs = async (req, res) => {
+// //   const bucketName = req.query.bucketName; // Get the bucket name from query parameter
+
+// //   if (!bucketName) {
+// //     return res.status(400).json({ error: 'Bucket name is required' });
+// //   }
+
+// //   try {
+// //     const documents = await fetchDocumentsFromBucket(bucketName);
+// //     res.status(200).json({ documents });
+// //   } catch (error) {
+// //     console.error('Error fetching documents:', error);
+// //     res.status(500).json({ error: 'Failed to fetch documents from bucket' });
+// //   }
+// // }
+
+// // const fetchDocumentsFromBucket = (bucketName) => {
+// //   return new Promise((resolve, reject) => {
+// //     const params = {
+// //       Bucket: bucketName
+// //     };
+
+// //     s3.listObjectsV2(params, (err, data) => {
+// //       if (err) {
+// //         console.error('Error fetching documents from bucket:', err);
+// //         reject(err);
+// //       } else {
+// //         const documents = data.Contents.map(obj => obj.Key);
+// //         resolve(documents);
+// //       }
+// //     });
+// //   });
+// // };
+
+// const getBuckets = async (req, res) => {
+//   try {
+//     // Query MongoDB to find all buckets
+//     const buckets = await Bucket.find({}, 'name'); // Only retrieve the bucketName field
+//     console.log(buckets)
+//     // Extract bucket names from the retrieved buckets
+//     const bucketNames = buckets.map(bucket => bucket.name);
+
+//     // Return the list of bucket names in the response
+//     res.status(200).json(bucketNames);
+//   } catch (error) {
+//     // Handle any errors that occur during the database query
+//     console.error('Error fetching buckets:', error);
+//     res.status(500).json({ error: 'Failed to fetch buckets' });
+//   }
+// }
+
+
+// const getBucketContents = async (bucketName) => {
+//   try {
+//     // Find the bucket document by name
+//     const bucket = await Bucket.findOne({ name: bucketName });
+
+//     if (!bucket) {
+//       throw new Error('Bucket not found');
+//     }
+
+//     // Return the files array of the bucket
+//     return bucket.files;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
+
+
+import FypRecommendation from '../Models/FYPRecommendations.js';
+
+//fyp
+const iamFypStudent = async (req, res) => {
+  try {
+    const { email, cgpa, department, skills, requirements, idea } = req.body;
+  
+    // Check if the email already exists
+    const existingStudent = await FypStudent.findOne({ email });
+    if (existingStudent) {
+      return res.status(400).json({ error: 'Student with this email already exists' });
+    }
+  
+    // Create a new FypStudent instance
+    const fypStudent = new FypStudent({
+      email,
+      cgpa,
+      department,
+      skills,
+      requirements,
+      idea
+    });
+  
+    // Save the new FypStudent to the database
+    const savedStudent = await fypStudent.save();
+    res.status(201).json(savedStudent); // Send the saved student data as response
+  
+    if (res.statusCode === 201) {
+      console.log("Fyp Student saved successfully")
+      const fypStudentsFromDB = await FypStudent.find();
+      const fypStudentsDataJson = JSON.stringify(fypStudentsFromDB);
+      
+      const pythonProcess = spawn('python', ['AI_model/fyp_recommendations.py', fypStudentsDataJson]);
+  
+      console.log("Returned back");
+      pythonProcess.stdout.on('data', async (data) => {
+          try {
+              const recommended_users = JSON.parse(data.toString());
+              console.log('Received JSON data:', recommended_users);
+              
+              // Loop through the recommended_users object
+              for (const [email, members] of Object.entries(recommended_users)) {
+                  // Check if the email already exists in FypRecommendation
+                  const existingRecommendation = await FypRecommendation.findOne({ email });
+                  if (existingRecommendation) {
+                      // Update the existing document by adding only new member objects
+                      members.forEach(newMember => {
+                          if (!existingRecommendation.members.some(existingMember => existingMember.email === newMember.email)) {
+                              existingRecommendation.members.push(newMember);
+                          }
+                      });
+                      await existingRecommendation.save();
+                      console.log(`Updated FypRecommendation for email ${email}`);
+                  } else {
+                      // Create a new FypRecommendation instance
+                      const fypRecommendation = new FypRecommendation({
+                          email,
+                          members
+                      });
+                      
+                      // Save the new FypRecommendation to the database
+                      const savedRecommendation = await fypRecommendation.save();
+                      console.log('Saved recommendation:', savedRecommendation);
+                  }
+              }
+          } catch (error) {
+              console.error('Error parsing Python output:', error);
+          }
+      });
+  
+      pythonProcess.stderr.on('data', (data) => {
+          console.error('Python process encountered an error:', data.toString());
+      });
+  
+      pythonProcess.on('close', (code) => {
+          console.log(`Python process closed with code ${code}`);
+      });
+  }
+  
+  
+  } catch (error) {
+    console.error('Error adding FypStudent:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+  }
+
+
+  const getFypRecommendations = async (req, res) => {
+    try {
+        const { email } = req.body;
+        
+        // Check if the email is provided
+        if (!email) {
+            return res.status(400).json({ error: 'Email is required' });
+        }
+
+        // Find the FypRecommendation document for the provided email
+        const recommendation = await FypRecommendation.findOne({ email }).populate('members');
+
+        // Check if the recommendation exists
+        if (!recommendation) {
+            return res.status(404).json({ error: 'Recommendation not found for the provided email' });
+        }
+
+        // Retrieve cgpa and department for each member using the email
+        const data = [];
+        for (const member of recommendation.members) {
+            // Find the FypStudent document for the member's email
+            const fypStudent = await FypStudent.findOne({ email: member.email });
+
+            // Check if the FypStudent document exists
+            if (fypStudent) {
+                // Add cgpa and department to the member data
+                const memberData = {
+                    email: member.email,
+                    cgpa: fypStudent.cgpa,
+                    department: fypStudent.department,
+                    skills: member.skills,
+                    requirements: member.requirements,
+                    idea: member.idea
+                };
+                data.push(memberData);
+            } else {
+                console.error(`FypStudent not found for email ${member.email}`);
+            }
+        }
+        console.log(data)
+        // Return the filtered recommendations
+        res.status(200).json(data);
+
+    } catch (error) {
+        console.error('Error getting recommendations:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
+
+export {verifyEmail,verifyOTP,createSessionRequest,findMentors,getMyDetails,makeABid,
+iamFypStudent,getFypRecommendations}

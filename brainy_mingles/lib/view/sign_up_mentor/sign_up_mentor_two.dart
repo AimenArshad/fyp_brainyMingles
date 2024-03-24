@@ -31,7 +31,8 @@ Future<void> sendEmail(String email) async {
     if (response.statusCode == 201) {
       print('Data sent successfully');
     } else {
-      print('Error sending data to the server. Status Code: ${response.statusCode}');
+      print(
+          'Error sending data to the server. Status Code: ${response.statusCode}');
       print('Response Body: ${response.body}');
     }
   } catch (error) {
@@ -96,7 +97,6 @@ class _SignUpMentorTwoState extends State<SignUpMentorTwo> {
               fit: BoxFit.cover,
             ),
           ),
-          
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: Column(
@@ -112,7 +112,6 @@ class _SignUpMentorTwoState extends State<SignUpMentorTwo> {
                   ),
                 ),
                 10.h.sbh,
-
                 Wrap(
                   spacing: 10.w,
                   children: StudentModel().domains.map((domain) {
@@ -120,7 +119,7 @@ class _SignUpMentorTwoState extends State<SignUpMentorTwo> {
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                            _showSlider(context, domain,expertiseArray);
+                            _showSlider(context, domain, expertiseArray);
                           },
                           style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all(
@@ -144,14 +143,16 @@ class _SignUpMentorTwoState extends State<SignUpMentorTwo> {
                                 ),
                               ),
                               if (expertiseMap.containsKey(domain))
-                                Text('${expertiseLevelMap[expertiseMap[domain]]}',
-                                style: TextStyle(
-                                  color: Colors.white, // Set text color to white
-                                  fontSize: 8.sp, // Decrease font size
-                                  fontFamily: 'Urbanist',
-                                  fontWeight: FontWeight.w500,
+                                Text(
+                                  '${expertiseLevelMap[expertiseMap[domain]]}',
+                                  style: TextStyle(
+                                    color:
+                                        Colors.white, // Set text color to white
+                                    fontSize: 8.sp, // Decrease font size
+                                    fontFamily: 'Urbanist',
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
-                              ),
                             ],
                           ),
                         ),
@@ -159,7 +160,6 @@ class _SignUpMentorTwoState extends State<SignUpMentorTwo> {
                     );
                   }).toList(),
                 ),
-
                 Text(
                   'Languages',
                   style: TextStyle(
@@ -170,14 +170,14 @@ class _SignUpMentorTwoState extends State<SignUpMentorTwo> {
                   ),
                 ),
                 10.h.sbh,
-                   Wrap(
+                Wrap(
                   spacing: 10.w,
                   children: StudentModel().languages.map((language) {
                     return Column(
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                            _showSlider(context, language,languagesArray);
+                            _showSlider(context, language, languagesArray);
                           },
                           style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all(
@@ -201,13 +201,16 @@ class _SignUpMentorTwoState extends State<SignUpMentorTwo> {
                                 ),
                               ),
                               if (expertiseMap.containsKey(language))
-                                Text('${expertiseLevelMap[expertiseMap[language]]}',
-                                style: TextStyle(
-                                  color: Colors.white, // Set text color to white
-                                  fontSize: 8.sp, // Decrease font size
-                                  fontFamily: 'Urbanist',
-                                  fontWeight: FontWeight.w500,
-                                ),),
+                                Text(
+                                  '${expertiseLevelMap[expertiseMap[language]]}',
+                                  style: TextStyle(
+                                    color:
+                                        Colors.white, // Set text color to white
+                                    fontSize: 8.sp, // Decrease font size
+                                    fontFamily: 'Urbanist',
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
                             ],
                           ),
                         ),
@@ -215,8 +218,6 @@ class _SignUpMentorTwoState extends State<SignUpMentorTwo> {
                     );
                   }).toList(),
                 ),
-
-
                 Text(
                   'Preferences',
                   style: TextStyle(
@@ -244,16 +245,20 @@ class _SignUpMentorTwoState extends State<SignUpMentorTwo> {
                       Row(
                         children: StudentModel().gender.map((gender) {
                           return Padding(
-                            padding: EdgeInsets.only(right: 10.0), // Adjust the right spacing as needed
+                            padding: EdgeInsets.only(
+                                right:
+                                    10.0), // Adjust the right spacing as needed
                             child: SmallButton(
                               text: gender,
                               isSelected: gender == selectedGender,
                               onPressed: () {
                                 setState(() {
                                   if (gender == selectedGender) {
-                                    selectedGender = null; // Deselect the current selection
-                                  } else{
-                                    selectedGender = gender; // Select the new gender
+                                    selectedGender =
+                                        null; // Deselect the current selection
+                                  } else {
+                                    selectedGender =
+                                        gender; // Select the new gender
                                   }
                                 });
                               },
@@ -261,7 +266,6 @@ class _SignUpMentorTwoState extends State<SignUpMentorTwo> {
                           );
                         }).toList(),
                       ),
-
                       Text(
                         'Mode',
                         style: TextStyle(
@@ -275,16 +279,20 @@ class _SignUpMentorTwoState extends State<SignUpMentorTwo> {
                       Row(
                         children: StudentModel().mode.map((mode) {
                           return Padding(
-                            padding: EdgeInsets.only(right: 10.0), // Adjust the right spacing as needed
+                            padding: EdgeInsets.only(
+                                right:
+                                    10.0), // Adjust the right spacing as needed
                             child: SmallButton(
                               text: mode,
                               isSelected: mode == selectedMode,
                               onPressed: () {
                                 setState(() {
                                   if (mode == selectedMode) {
-                                    selectedMode = null; // Deselect the current selection
+                                    selectedMode =
+                                        null; // Deselect the current selection
                                   } else {
-                                    selectedMode = mode; // Select the new gender
+                                    selectedMode =
+                                        mode; // Select the new gender
                                   }
                                 });
                               },
@@ -305,20 +313,23 @@ class _SignUpMentorTwoState extends State<SignUpMentorTwo> {
                       Row(
                         children: StudentModel().session.map((session) {
                           return Padding(
-                            padding: EdgeInsets.only(right: 10.0), // Adjust the right spacing as needed
+                            padding: EdgeInsets.only(
+                                right:
+                                    10.0), // Adjust the right spacing as needed
                             child: SmallButton(
                               text: session,
                               isSelected: session == selectedSession,
                               onPressed: () {
                                 setState(() {
                                   if (session == selectedSession) {
-                                    selectedSession = null; // Deselect the current selection
+                                    selectedSession =
+                                        null; // Deselect the current selection
                                   } else {
-                                    selectedSession = session; // Select the new gender
+                                    selectedSession =
+                                        session; // Select the new gender
                                   }
                                 });
                               },
-                              
                             ),
                           );
                         }).toList(),
@@ -334,18 +345,23 @@ class _SignUpMentorTwoState extends State<SignUpMentorTwo> {
                       ),
                       10.h.sbh,
                       Row(
-                        children: StudentModel().availability.map((availability) {
+                        children:
+                            StudentModel().availability.map((availability) {
                           return Padding(
-                            padding: EdgeInsets.only(right: 10.0), // Adjust the right spacing as needed
+                            padding: EdgeInsets.only(
+                                right:
+                                    10.0), // Adjust the right spacing as needed
                             child: SmallButton(
                               text: availability,
                               isSelected: availability == selectedAvailability,
                               onPressed: () {
                                 setState(() {
                                   if (availability == selectedAvailability) {
-                                    selectedAvailability = null; // Deselect the current selection
+                                    selectedAvailability =
+                                        null; // Deselect the current selection
                                   } else {
-                                    selectedAvailability = availability; // Select the new gender
+                                    selectedAvailability =
+                                        availability; // Select the new gender
                                   }
                                 });
                               },
@@ -353,7 +369,6 @@ class _SignUpMentorTwoState extends State<SignUpMentorTwo> {
                           );
                         }).toList(),
                       ),
- 
                     ],
                   ),
                 ),
@@ -377,8 +392,18 @@ class _SignUpMentorTwoState extends State<SignUpMentorTwo> {
                           phoneNumber: phoneNumber,
                           budget: budget,
                           password: password,
-                          programmingDomains: expertiseArray.map((domain) => {'name': domain, 'score': expertiseMap[domain]}).toList(),
-                          programmingLanguages: languagesArray.map((language) => {'name': language, 'score': expertiseMap[language]}).toList(),
+                          programmingDomains: expertiseArray
+                              .map((domain) => {
+                                    'name': domain,
+                                    'score': expertiseMap[domain]
+                                  })
+                              .toList(),
+                          programmingLanguages: languagesArray
+                              .map((language) => {
+                                    'name': language,
+                                    'score': expertiseMap[language]
+                                  })
+                              .toList(),
                           gender: selectedGender!,
                           mode: selectedMode!,
                           session: selectedSession!,
@@ -397,69 +422,77 @@ class _SignUpMentorTwoState extends State<SignUpMentorTwo> {
     );
   }
 
- void _showSlider(BuildContext context, String domain,List<String> expertiseArr) {
-  int selectedValue = expertiseMap.containsKey(domain) ? expertiseMap[domain]! : 0;
+  void _showSlider(
+      BuildContext context, String domain, List<String> expertiseArr) {
+    int selectedValue =
+        expertiseMap.containsKey(domain) ? expertiseMap[domain]! : 0;
 
-  showModalBottomSheet(
-    context: context,
-    builder: (BuildContext context) {
-      return StatefulBuilder(
-        builder: (BuildContext context, StateSetter setState) {
-          return Container(
-            padding: EdgeInsets.all(16.w),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('Select Value for $domain'),
-                Slider(
-                  value: selectedValue.toDouble(),
-                  min: 0,
-                  max: 9,
-                  divisions: 9,
-                  label: expertiseLevelMap[selectedValue]!,
-                  activeColor: AppColor.blueColor,
-                  onChanged: (double newvalue) {
-                    setState(() {
-                      selectedValue = newvalue.toInt();
-                    });
-                  },
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      expertiseMap[domain] = selectedValue;
-                      if (selectedValue > 0 && !expertiseArr.contains(domain)) {
-                        expertiseArr.add(domain);
-                      } else if (selectedValue == 0 && expertiseArr.contains(domain)) {
-                        expertiseArr.remove(domain);
-                      }
-                    });
-
-                    // Close the bottom sheet and execute the callback
-                    Navigator.pop(context, () {
-                      setState(() {});
-                    });
-                  },
-                 style: ElevatedButton.styleFrom(
-                    primary: AppColor.blueColor, // Set the background color of the button
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Container(
+              padding: EdgeInsets.all(16.w),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('Select Value for $domain'),
+                  Slider(
+                    value: selectedValue.toDouble(),
+                    min: 0,
+                    max: 9,
+                    divisions: 9,
+                    label: expertiseLevelMap[selectedValue]!,
+                    activeColor: AppColor.blueColor,
+                    onChanged: (double newvalue) {
+                      setState(() {
+                        selectedValue = newvalue.toInt();
+                      });
+                    },
                   ),
-                  child: Text(
-                    'OK',
-                    style: TextStyle(
-                      color: Colors.white, // Set the text color of the button
-                      fontSize: 16.sp, // Adjust font size as needed
-                      fontFamily: 'Urbanist',
-                      fontWeight: FontWeight.w500,
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        expertiseMap[domain] = selectedValue;
+                        if (selectedValue > 0 &&
+                            !expertiseArr.contains(domain)) {
+                          expertiseArr.add(domain);
+                        } else if (selectedValue == 0 &&
+                            expertiseArr.contains(domain)) {
+                          expertiseArr.remove(domain);
+                        }
+                      });
+
+                      // Close the bottom sheet and execute the callback
+                      Navigator.pop(context, () {
+                        setState(() {});
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColor
+
+                          ///changed
+                          .blueColor, // Set the background color of the button
+                    ),
+                    child: Text(
+                      'OK',
+                      style: TextStyle(
+                        color: Colors.white, // Set the text color of the button
+                        fontSize: 16.sp, // Adjust font size as needed
+                        fontFamily: 'Urbanist',
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          );
-        },
-      );
-    },
-  ).then((value) {
-    setState(() {});
-  });
-}}
+                ],
+              ),
+            );
+          },
+        );
+      },
+    ).then((value) {
+      setState(() {});
+    });
+  }
+}
