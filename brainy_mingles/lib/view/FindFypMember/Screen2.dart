@@ -197,7 +197,9 @@ class _RegisterFypState extends State<RegisterFyp> {
       try {
         // Make the API call
         final response = await http.post(
-          Uri.parse('http://10.0.2.2:4200/api/student/fypstudent'),
+          //Uri.parse('http://10.0.2.2:4200/api/student/fypstudent'),
+          Uri.parse('http://192.168.10.25:4200/api/student/fypstudent'),
+
           headers: {
             "Content-Type": "application/json",
             "Authorization": "Bearer $token",

@@ -46,12 +46,6 @@ class _BiddingRequestViewState extends State<BiddingRequestView> {
   }
 
   Future<void> createBiddingRequest() async {
-    // final bids = {
-    //   "budget": budget,
-    //   "sessionType": sessionType,
-    //   "course": selectedCourse,
-    // };
-
     final requestData = {
       "mentorEmail": widget.mentorEmail,
       "budget": budget,
@@ -64,7 +58,8 @@ class _BiddingRequestViewState extends State<BiddingRequestView> {
 
     if (token != null) {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:4200/api/student/bid-request'),
+        //Uri.parse('http://10.0.2.2:4200/api/student/bid-request'),
+        Uri.parse('http://192.168.10.25:4200/api/student/bid-request'),
         body: jsonEncode(requestData),
         headers: {
           "Content-Type": "application/json",
@@ -105,20 +100,6 @@ class _BiddingRequestViewState extends State<BiddingRequestView> {
                   ),
                 ),
                 40.h.sbh,
-                // DropdownButton<String>(
-                //   value: selectedCourse,
-                //   onChanged: (String? newValue) {
-                //     setState(() {
-                //       selectedCourse = newValue!;
-                //     });
-                //   },
-                //   items: BiddingCourses.courses.map((String course) {
-                //     return DropdownMenuItem<String>(
-                //       value: course,
-                //       child: Text(course),
-                //     );
-                //   }).toList(),
-                // ),
                 Container(
                   width: double.infinity,
                   height: 55.h,

@@ -36,8 +36,8 @@ class _BiddingRequestState extends State<BiddingRequest> {
     if (token != null) {
       final response = await http.get(
         Uri.parse(
-          'http://10.0.2.2:4200/api/mentor/get-bidding-request',
-        ),
+            //'http://10.0.2.2:4200/api/mentor/get-bidding-request',
+            'http://192.168.10.25:4200/api/mentor/get-bidding-request'),
         headers: {
           "Authorization": "Bearer $token",
         },

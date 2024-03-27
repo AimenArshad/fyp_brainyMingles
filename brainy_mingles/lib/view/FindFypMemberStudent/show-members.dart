@@ -5,7 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:brainy_mingles/widgets/custom_appbar.dart';
 import 'package:brainy_mingles/widgets/custom_drawer.dart';
-import 'package:brainy_mingles/widgets/my_button.dart';
 import 'package:brainy_mingles/const/app_colors.dart';
 import 'package:brainy_mingles/const/sizedbox_extension.dart';
 import 'package:brainy_mingles/view/FindFypMember/IamFypMember.dart';
@@ -36,8 +35,11 @@ class _GetYourMemberState extends State<GetYourMember> {
     print(token);
     if (token != null) {
       final response = await http.get(
+        // Uri.parse(
+        //   'http://10.0.2.2:4200/api/student/getfyprecommendations',
+        // ),
         Uri.parse(
-          'http://10.0.2.2:4200/api/student/getfyprecommendations',
+          'http://192.168.10.25:4200/api/student/getfyprecommendations',
         ),
         headers: {
           "Authorization": "Bearer $token",
@@ -62,8 +64,11 @@ class _GetYourMemberState extends State<GetYourMember> {
     print(token);
     if (token != null) {
       final response = await http.delete(
+        // Uri.parse(
+        //   'http://10.0.2.2:4200/api/student/got-my-member',
+        // ),
         Uri.parse(
-          'http://10.0.2.2:4200/api/student/got-my-member',
+          'http://192.168.10.25:4200/api/student/got-my-member',
         ),
         headers: {
           "Authorization": "Bearer $token",

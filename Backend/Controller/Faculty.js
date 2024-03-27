@@ -168,4 +168,4 @@ const addFaculty = async (req, res) => {
   }
 }
 
-  export {getmentorshipRequests,approveMentors,addFaculty,rejectMentors}
+  export {getmentorshipRequests,approveMentors,addFaculty,rejectMentors, updateRecommendations}

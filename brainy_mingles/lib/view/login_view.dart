@@ -10,6 +10,7 @@ import 'dart:convert';
 import 'package:brainy_mingles/view/Mentor/main_home_view.dart';
 import 'package:brainy_mingles/view/Student/main_home_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:brainy_mingles/view/block_users/block_user.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key});
@@ -30,12 +31,11 @@ class _LoginViewState extends State<LoginView> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('token', token);
   }
+
   Future<void> storeStudentId(String userId) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('studentId', userId);
   }
-
-
 
   Future<void> performLogin() async {
     // Clear previous validation errors
@@ -69,7 +69,8 @@ class _LoginViewState extends State<LoginView> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:4200/api/login'),
+        Uri.parse('http://192.168.10.25:4200/api/login'),
+        // Uri.parse('http://10.0.2.2:4200/api/login'),
         body: jsonEncode(loginData),
         headers: {"Content-Type": "application/json"},
       );
@@ -99,6 +100,8 @@ class _LoginViewState extends State<LoginView> {
               MaterialPageRoute(builder: (context) => MainHomeViewMentor()));
         } else if (role == "faculty") {
           message = "Logged in as Faculty";
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => ReportScreen()));
         } else if (role == "admin") {
           message = "Logged in as an Admin";
         } else {

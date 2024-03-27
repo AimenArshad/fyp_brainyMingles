@@ -1,27 +1,12 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:brainy_mingles/widgets/my_button.dart';
 import 'package:brainy_mingles/view/FindFypMember/Screen2.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:brainy_mingles/widgets/custom_appbar.dart';
 import 'package:brainy_mingles/widgets/custom_drawer.dart';
 import 'package:brainy_mingles/const/sizedbox_extension.dart';
-import 'package:brainy_mingles/widgets/my_button.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:brainy_mingles/view/find_a_mentor/arrange_a_session.dart';
-import 'package:brainy_mingles/view/Bidding/bid-a-mentor.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:brainy_mingles/const/app_colors.dart';
-import 'package:brainy_mingles/widgets/custom_appbar.dart';
-import 'package:brainy_mingles/widgets/custom_textfield.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:brainy_mingles/widgets/custom_drawer.dart';
-import 'package:brainy_mingles/view/Student/main_home_view.dart';
 
 class StudentScreen1 extends StatefulWidget {
   const StudentScreen1({Key? key}) : super(key: key);

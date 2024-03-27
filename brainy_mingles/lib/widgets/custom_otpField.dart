@@ -1,13 +1,9 @@
-import 'package:brainy_mingles/const/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 
 class CustomOTPField extends StatelessWidget {
   final TextEditingController controller;
   final FocusNode focusNode;
   final ValueChanged<String>? onChanged;
-  
 
   CustomOTPField({
     required this.controller,

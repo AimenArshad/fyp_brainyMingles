@@ -35,8 +35,11 @@ class _AcceptedSessionRequestState extends State<AcceptedSessionRequest> {
     print(token);
     if (token != null) {
       final response = await http.get(
+        // Uri.parse(
+        //   'http://10.0.2.2:4200/api/mentor/get-my-singlesessions',
+        // ),
         Uri.parse(
-          'http://10.0.2.2:4200/api/mentor/get-my-singlesessions',
+          'http://192.168.10.25:4200/api/mentor/get-my-singlesessions',
         ),
         headers: {
           "Authorization": "Bearer $token",
@@ -160,8 +163,10 @@ class AcceptedSessionRequestBox extends StatelessWidget {
     print(token);
     if (token != null) {
       final response = await http.post(
+        // Uri.parse(
+        //     'http://10.0.2.2:4200/api/mentor/reject-accpeted-session-request'),
         Uri.parse(
-            'http://10.0.2.2:4200/api/mentor/reject-accpeted-session-request'),
+            'http://192.168.10.25:4200/api/mentor/reject-accpeted-session-request'),
         body: jsonEncode(requestData),
         headers: {
           "Content-Type": "application/json",

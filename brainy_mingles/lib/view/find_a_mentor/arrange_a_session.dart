@@ -66,7 +66,8 @@ class _ArrangeASessionViewState extends State<ArrangeASessionView> {
 
     if (token != null) {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:4200/api/student/session-request'),
+        //Uri.parse('http://10.0.2.2:4200/api/student/session-request'),
+        Uri.parse('http://192.168.10.25:4200/api/student/session-request'),
         body: jsonEncode(requestData),
         headers: {
           "Content-Type": "application/json",

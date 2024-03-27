@@ -1,5 +1,7 @@
 import 'package:brainy_mingles/const/sizedbox_extension.dart';
 import 'package:brainy_mingles/view/Bidding/accept-request-bid.dart';
+import 'package:brainy_mingles/view/StudentResources/get_resource.dart';
+import 'package:brainy_mingles/view/block_users/block_user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -10,6 +12,7 @@ import 'package:brainy_mingles/view/sessions_request/session_request.dart';
 import 'package:brainy_mingles/view/sessions_request/my-sesssions.dart';
 import 'package:brainy_mingles/view/find_a_mentor/find_a_mentor.dart';
 import 'package:brainy_mingles/view/Student/main_home_view.dart';
+import 'package:brainy_mingles/view/resource_management/resource_menu.dart';
 
 class FacultyDrawer extends StatelessWidget {
   const FacultyDrawer({super.key});
@@ -91,6 +94,25 @@ class FacultyDrawer extends StatelessWidget {
                 fontSize: 14.sp,
                 fontFamily: 'Inter',
                 fontWeight: FontWeight.w500,
+              ),
+            ),
+            20.h.sbh,
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ReportScreen(),
+                  ),
+                );
+              },
+              child: Text(
+                'Block Users',
+                style: TextStyle(
+                  color: const Color(0xFF757575),
+                  fontSize: 14.sp,
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
             80.h.sbh,
@@ -289,13 +311,23 @@ class MentorDrawer1 extends StatelessWidget {
               ],
             ),
             20.h.sbh,
-            Text(
-              'Resources',
-              style: TextStyle(
-                color: const Color(0xFF757575),
-                fontSize: 14.sp,
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w500,
+            GestureDetector(
+              onTap: () {
+                // Navigate to the resources page
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => Resources(),
+                  ),
+                );
+              },
+              child: Text(
+                'Resources',
+                style: TextStyle(
+                  color: const Color(0xFF757575),
+                  fontSize: 14.sp,
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
             20.h.sbh,
@@ -558,13 +590,23 @@ class StudentDrawer extends StatelessWidget {
               ],
             ),
             20.h.sbh,
-            Text(
-              'Resources',
-              style: TextStyle(
-                color: const Color(0xFF757575),
-                fontSize: 14.sp,
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w500,
+            GestureDetector(
+              onTap: () {
+                // Navigate to the resources page
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const StudentResources(),
+                  ),
+                );
+              },
+              child: Text(
+                'Resources',
+                style: TextStyle(
+                  color: const Color(0xFF757575),
+                  fontSize: 14.sp,
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
             20.h.sbh,
