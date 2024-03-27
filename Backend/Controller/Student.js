@@ -517,7 +517,93 @@ const verifyOTP = async (req, res) => {
 
 import FypRecommendation from '../Models/FYPRecommendations.js';
 
-//fyp
+// //fyp
+// const iamFypStudent = async (req, res) => {
+//   try {
+//     const { email, cgpa, department, skills, requirements, idea } = req.body;
+  
+//     // Check if the email already exists
+//     const existingStudent = await FypStudent.findOne({ email });
+//     if (existingStudent) {
+//       return res.status(400).json({ error: 'Student with this email already exists' });
+//     }
+  
+//     // Create a new FypStudent instance
+//     const fypStudent = new FypStudent({
+//       email,
+//       cgpa,
+//       department,
+//       skills,
+//       requirements,
+//       idea
+//     });
+  
+//     // Save the new FypStudent to the database
+//     const savedStudent = await fypStudent.save();
+//     res.status(201).json(savedStudent); // Send the saved student data as response
+  
+//     if (res.statusCode === 201) {
+//       console.log("Fyp Student saved successfully")
+//       const fypStudentsFromDB = await FypStudent.find();
+//       const fypStudentsDataJson = JSON.stringify(fypStudentsFromDB);
+      
+//       const pythonProcess = spawn('python', ['AI_model/fyp_recommendations.py', fypStudentsDataJson]);
+  
+//       console.log("Returned back");
+//       pythonProcess.stdout.on('data', async (data) => {
+//           try {
+//               const recommended_users = JSON.parse(data.toString());
+//               console.log('Received JSON data:', recommended_users);
+              
+//               for (const [email, members] of Object.entries(recommended_users)) {
+//                 // Check if the email already exists in FypRecommendation
+//                 const existingRecommendation = await FypRecommendation.findOne({ email });
+//                 if (existingRecommendation) {
+//                     // Initialize existing members to an empty array if null
+//                     existingRecommendation.members = existingRecommendation.members || [];
+            
+//                     // Update the existing document by adding only new member objects
+//                     members.forEach(newMember => {
+//                         if (!existingRecommendation.members.some(existingMember => existingMember.email === newMember.email)) {
+//                             existingRecommendation.members.push(newMember);
+//                         }
+//                     });
+//                     await existingRecommendation.save();
+//                     console.log(`Updated FypRecommendation for email ${email}`);
+//                 } else {
+//                     // Create a new FypRecommendation instance
+//                     const fypRecommendation = new FypRecommendation({
+//                         email,
+//                         members
+//                     });
+                    
+//                     // Save the new FypRecommendation to the database
+//                     const savedRecommendation = await fypRecommendation.save();
+//                     console.log('Saved recommendation:', savedRecommendation);
+//                 }
+//             }
+            
+//           } catch (error) {
+//               console.error('Error parsing Python output:', error);
+//           }
+//       });
+  
+//       pythonProcess.stderr.on('data', (data) => {
+//           console.error('Python process encountered an error:', data.toString());
+//       });
+  
+//       pythonProcess.on('close', (code) => {
+//           console.log(`Python process closed with code ${code}`);
+//       });
+//   }
+  
+  
+//   } catch (error) {
+//     console.error('Error adding FypStudent:', error);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+//   }
+
 const iamFypStudent = async (req, res) => {
   try {
     const { email, cgpa, department, skills, requirements, idea } = req.body;
@@ -555,17 +641,22 @@ const iamFypStudent = async (req, res) => {
               const recommended_users = JSON.parse(data.toString());
               console.log('Received JSON data:', recommended_users);
               
-              // Loop through the recommended_users object
-              for (const [email, members] of Object.entries(recommended_users)) {
+              if (recommended_users) { // Add null check
+                for (const [email, members] of Object.entries(recommended_users)) {
                   // Check if the email already exists in FypRecommendation
                   const existingRecommendation = await FypRecommendation.findOne({ email });
                   if (existingRecommendation) {
+                      // Initialize existing members to an empty array if null
+                      existingRecommendation.members = existingRecommendation.members || [];
+              
                       // Update the existing document by adding only new member objects
-                      members.forEach(newMember => {
+                      if (Array.isArray(members) && members.length > 0) {// Add null check
+                        members.forEach(newMember => {
                           if (!existingRecommendation.members.some(existingMember => existingMember.email === newMember.email)) {
-                              existingRecommendation.members.push(newMember);
+                            existingRecommendation.members.push(newMember);
                           }
-                      });
+                        });
+                      }
                       await existingRecommendation.save();
                       console.log(`Updated FypRecommendation for email ${email}`);
                   } else {
@@ -579,7 +670,9 @@ const iamFypStudent = async (req, res) => {
                       const savedRecommendation = await fypRecommendation.save();
                       console.log('Saved recommendation:', savedRecommendation);
                   }
+                }
               }
+              
           } catch (error) {
               console.error('Error parsing Python output:', error);
           }
@@ -592,14 +685,14 @@ const iamFypStudent = async (req, res) => {
       pythonProcess.on('close', (code) => {
           console.log(`Python process closed with code ${code}`);
       });
-  }
-  
-  
+    }
   } catch (error) {
     console.error('Error adding FypStudent:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: 'Internal Server Error' });
   }
-  }
+};
+
+
 
 
   const getFypRecommendations = async (req, res) => {
@@ -621,7 +714,9 @@ const iamFypStudent = async (req, res) => {
 
         // Retrieve cgpa and department for each member using the email
         const data = [];
+        if (recommendation.members !== null && recommendation.members.length > 0) {
         for (const member of recommendation.members) {
+          
             // Find the FypStudent document for the member's email
             const fypStudent = await FypStudent.findOne({ email: member.email });
 
@@ -640,6 +735,7 @@ const iamFypStudent = async (req, res) => {
             } else {
                 console.error(`FypStudent not found for email ${member.email}`);
             }
+          }
         }
         console.log(data)
         // Return the filtered recommendations
@@ -651,6 +747,35 @@ const iamFypStudent = async (req, res) => {
     }
 }
 
+// route to delete 
+const gotMyMember = async (req, res) => {
+  try {
+    const { email } = req.body;
+    console.log(email);
+
+    // Delete user from FypRecommendation schema
+    await FypRecommendation.findOneAndDelete({ email });
+
+    // Delete user from FypStudent schema
+    await FypStudent.findOneAndDelete({ email });
+
+    // Iterate through members array in FypRecommendation schema and remove member.email object if it matches the email
+    const recommendations = await FypRecommendation.find();
+    for (const recommendation of recommendations) {
+      // Check if recommendation.members is not null
+      if (recommendation.members) {
+        const updatedMembers = recommendation.members.filter(member => member.email !== email);
+        await FypRecommendation.findByIdAndUpdate(recommendation._id, { members: updatedMembers });
+      }
+    }
+
+    res.status(200).json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 
 export {verifyEmail,verifyOTP,createSessionRequest,findMentors,getMyDetails,makeABid,
-iamFypStudent,getFypRecommendations}
+iamFypStudent,getFypRecommendations,gotMyMember}

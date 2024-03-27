@@ -12,7 +12,7 @@ import 'package:brainy_mingles/widgets/custom_appbar.dart';
 import 'package:brainy_mingles/widgets/custom_textfield.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:brainy_mingles/widgets/custom_drawer.dart';
-
+import 'package:brainy_mingles/view/Student/main_home_view.dart';
 
 class FindAMentorView extends StatefulWidget {
   const FindAMentorView({Key? key});
@@ -30,7 +30,7 @@ class _FindAMentorViewState extends State<FindAMentorView> {
     fetchMentors();
   }
 
- Future<String?> retrieveToken() async {
+  Future<String?> retrieveToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('token');
   }
@@ -44,11 +44,13 @@ class _FindAMentorViewState extends State<FindAMentorView> {
     final String? token = await retrieveToken();
     final String? studentId = await retrieveId();
     print(studentId);
-    final response = await http
-        .get(Uri.parse('http://10.0.2.2:4200/api/student/$studentId/displayRecommendations'),
-        headers: {
-          "Authorization": "Bearer $token",
-        },);
+    final response = await http.get(
+      Uri.parse(
+          'http://10.0.2.2:4200/api/student/$studentId/displayRecommendations'),
+      headers: {
+        "Authorization": "Bearer $token",
+      },
+    );
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -63,7 +65,8 @@ class _FindAMentorViewState extends State<FindAMentorView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const MentorDrawer(),
+      drawer: const StudentDrawer(),
+      // view: const MainHomeViewStudent(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -119,7 +122,7 @@ class _FindAMentorViewState extends State<FindAMentorView> {
                 return MentorBox(
                   name: mentor['name'].toString(),
                   email: mentor['email'],
-                  gender:mentor['gender'],
+                  gender: mentor['gender'],
                   budget: mentor['budget'].toString(),
                 );
               },
@@ -127,9 +130,13 @@ class _FindAMentorViewState extends State<FindAMentorView> {
           ),
         ],
       ),
+      // Move MainHomeViewStudent to bottomNavigationBar
     );
   }
 }
+
+// bottomNavigationBar:
+//         const MainHomeViewStudent(),
 
 class MentorBox extends StatefulWidget {
   final String name;

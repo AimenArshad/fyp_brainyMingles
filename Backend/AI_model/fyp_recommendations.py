@@ -25,7 +25,7 @@ ideas_vectors = vectorizer.fit_transform(df['idea'])
 combined_features = ideas_vectors
 
 # Clustering using K-Means
-kmeans = KMeans(n_clusters=4)  # You can choose the number of clusters based on requirements
+kmeans = KMeans(n_clusters=2)  # You can choose the number of clusters based on requirements
 clusters = kmeans.fit_predict(combined_features)
 
 df['cluster'] = clusters

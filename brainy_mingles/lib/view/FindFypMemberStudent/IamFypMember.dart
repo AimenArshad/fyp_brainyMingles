@@ -23,14 +23,14 @@ import 'package:flutter_svg/svg.dart';
 import 'package:brainy_mingles/widgets/custom_drawer.dart';
 import 'package:brainy_mingles/view/Student/main_home_view.dart';
 
-class Screen1 extends StatefulWidget {
-  const Screen1({Key? key}) : super(key: key);
+class StudentScreen1 extends StatefulWidget {
+  const StudentScreen1({Key? key}) : super(key: key);
 
   @override
-  State<Screen1> createState() => _Screen1State();
+  State<StudentScreen1> createState() => _StudentScreen1State();
 }
 
-class _Screen1State extends State<Screen1> {
+class _StudentScreen1State extends State<StudentScreen1> {
   String? cgpa;
   String? department;
   String? idea;
@@ -53,7 +53,7 @@ class _Screen1State extends State<Screen1> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const MentorDrawer1(),
+      drawer: const StudentDrawer(),
       body: Column(
         //  padding: EdgeInsets.all(20.0),
         children: [

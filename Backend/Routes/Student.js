@@ -1,6 +1,6 @@
 import express from 'express'
 const router=express.Router()
-import { verifyEmail,verifyOTP, createSessionRequest,findMentors, getMyDetails, makeABid, iamFypStudent, getFypRecommendations} from '../Controller/Student.js'
+import { verifyEmail,verifyOTP, createSessionRequest,findMentors, getMyDetails, makeABid, iamFypStudent, getFypRecommendations, gotMyMember} from '../Controller/Student.js'
 import authMiddleware  from '../Middlerware/Auth.js';
 import { fetchRecommendation } from '../Controller/Recommendation.js';
 import multer from 'multer'; 
@@ -28,4 +28,6 @@ router.get('/:studentId/displayRecommendations',authMiddleware,fetchRecommendati
 
 router.post('/fypstudent',authMiddleware,iamFypStudent)
 router.get('/getfyprecommendations',authMiddleware,getFypRecommendations)
+router.delete('/got-my-member',authMiddleware,gotMyMember)
+
 export default router;

@@ -59,7 +59,7 @@ class _AcceptedSessionRequestState extends State<AcceptedSessionRequest> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const MentorDrawer(),
+      drawer: const MentorDrawer1(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

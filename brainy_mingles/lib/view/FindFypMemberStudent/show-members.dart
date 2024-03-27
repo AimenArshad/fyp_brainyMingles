@@ -82,7 +82,7 @@ class _GetYourMemberState extends State<GetYourMember> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const MentorDrawer1(),
+      drawer: const StudentDrawer(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

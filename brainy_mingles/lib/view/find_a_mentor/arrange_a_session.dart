@@ -8,6 +8,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:brainy_mingles/widgets/custom_drawer.dart';
+
 class ArrangeASessionView extends StatefulWidget {
   final String mentorEmail; // Add this parameter
 
@@ -88,6 +90,7 @@ class _ArrangeASessionViewState extends State<ArrangeASessionView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const StudentDrawer(),
       body: Column(
         children: [
           const CustomAppBar(),

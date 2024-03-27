@@ -9,19 +9,19 @@ class DashboardInfoBox extends StatelessWidget {
   final String name;
   final String email;
   final String phoneNo;
-  final String degree;
-  final String batch;
+  final String gender;
   final String status;
-  const DashboardInfoBox(
-      {super.key,
-      required this.boxName,
-      required this.imageAddress,
-      required this.name,
-      required this.email,
-      required this.phoneNo,
-      required this.degree,
-      required this.batch,
-      required this.status});
+
+  const DashboardInfoBox({
+    Key? key,
+    required this.boxName,
+    required this.imageAddress,
+    required this.name,
+    required this.email,
+    required this.phoneNo,
+    required this.gender,
+    required this.status,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -67,15 +67,14 @@ class DashboardInfoBox extends StatelessWidget {
                     reusableRowText("Email:", email),
                     13.h.sbh,
                     reusableRowText("Phone no:", phoneNo),
+                    13.h.sbh,
                   ],
                 ),
                 const Spacer(),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    reusableRowText("Degree", degree),
-                    13.h.sbh,
-                    reusableRowText("Batch", batch),
+                    reusableRowText("Gender", gender),
                     13.h.sbh,
                     reusableRowText("Status", status),
                   ],

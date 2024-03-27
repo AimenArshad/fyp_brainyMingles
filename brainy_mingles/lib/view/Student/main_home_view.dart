@@ -16,8 +16,8 @@ class MainHomeViewStudent extends StatefulWidget {
 }
 
 List<Widget> pages = [
-  //DashboardView(),
-  GetYourMember(),
+  DashboardView(),
+//  GetYourMember(),
   FindAMentorView(),
   FindAMentorView(),
   FindAMentorView(),
